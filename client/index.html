@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>On Deck</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel=stylesheet type=text/css href="styles/main.css">
+</head>
+
+<body>
+  <div class="container">
+    <table>
+      <thead>
+        <tr><th>commitment</th><th>task</th><th>dueDate</th></tr>
+      </thead>
+      <tbody data-bind="foreach: allTasks">
+          <tr>
+              <td data-bind="text: commitment"></td>
+              <td data-bind="text: name"></td>
+              <td data-bind="text: dueDate"></td>
+          </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <script src="js/lib/knockout-3.2.0.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
