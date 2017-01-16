@@ -33,6 +33,7 @@ var ViewModel = function() {
         name: ko.observable(data.tasks[i].name),
         commitment: ko.observable(data.tasks[i].commitment),
         dueDate: ko.observable(data.tasks[i].due_date),
+        daysLeft: ko.observable(data.tasks[i].days_left),
         headsUp: ko.observable(data.tasks[i].heads_up),
         createdDate: ko.observable(data.tasks[i].created_date),
         done: ko.observable(data.tasks[i].done)
