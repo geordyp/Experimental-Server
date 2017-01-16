@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% block content %}
-
-<p>{{name}}</p>
-
+<div class="task-list">
+  {% for t in tasks %}
+    <div class="task">{{t.commitment}} - {{t.name}} - {{t.due_date}} - {{t.status}} | set status | delete | edit | add to on deck</div>
+  {% endfor %}
+</div>
 {% endblock %}

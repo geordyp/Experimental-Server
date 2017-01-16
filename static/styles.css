@@ -1,7 +1,32 @@
 body {
-  width: 100vw;
-  height: 100vh;
   padding: 0;
   margin: 0;
+}
+
+.container {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  background-color: #fff;
+}
+
+.task-list {
+  width: 90%;
+  max-width: 1000px;
+  height: auto;
+  padding: 10px;
+  margin-top: 100px;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: #293241;
+}
+
+.task {
+  width: 95%;
+  height: auto;
+  padding: 10px;
+  margin-bottom: 10px;
+  margin-left: auto;
+  margin-right: auto;
   background-color: #ddd8b8;
 }

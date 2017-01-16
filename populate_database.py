@@ -26,9 +26,8 @@ task1 = Task(name="clean room",
              commitment="me",
              due_date="1-16-17",
              heads_up="1-16-17",
-             notes="do a really good job",
              enduser_id=user1.id,
-             status="idle")
+             done=True)
 session.add(task1)
 session.commit()
 
@@ -36,9 +35,8 @@ task2 = Task(name="purge inbox",
              commitment="me",
              due_date="1-11-17",
              heads_up="1-11-17",
-             notes="respond to people",
              enduser_id=user1.id,
-             status="working")
+             done=False)
 session.add(task2)
 session.commit()
 
@@ -46,9 +44,8 @@ task3 = Task(name="finish reading that book",
              commitment="me",
              due_date="1-16-17",
              heads_up="1-16-17",
-             notes="",
              enduser_id=user1.id,
-             status="done")
+             done=False)
 session.add(task3)
 session.commit()
 
@@ -56,9 +53,8 @@ task4 = Task(name="set date for ead",
              commitment="nsbe",
              due_date="1-18-17",
              heads_up="1-15-17",
-             notes="",
              enduser_id=user1.id,
-             status="idle")
+             done=False)
 session.add(task4)
 session.commit()
 
@@ -66,9 +62,8 @@ task5 = Task(name="set dates for coderdojo",
              commitment="coderdojo",
              due_date="1-17-17",
              heads_up="1-17-17",
-             notes="",
              enduser_id=user1.id,
-             status="idle")
+             done=False)
 session.add(task5)
 session.commit()
 
@@ -76,9 +71,8 @@ task6 = Task(name="homework 1",
              commitment="math551",
              due_date="1-18-17",
              heads_up="1-18-17",
-             notes="",
              enduser_id=user1.id,
-             status="idle")
+             done=True)
 session.add(task6)
 session.commit()
 
@@ -86,9 +80,8 @@ task7 = Task(name="homework 2",
              commitment="math551",
              due_date="1-19-17",
              heads_up="1-19-17",
-             notes="",
              enduser_id=user1.id,
-             status="idle")
+             done=False)
 session.add(task7)
 session.commit()
 
@@ -96,9 +89,8 @@ task8 = Task(name="homework 3",
              commitment="math551",
              due_date="1-20-17",
              heads_up="1-18-17",
-             notes="",
              enduser_id=user1.id,
-             status="idle")
+             done=False)
 session.add(task8)
 session.commit()
 
