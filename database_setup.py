@@ -6,6 +6,8 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy import types
 
 import datetime
+from datetime import date
+import time
 
 
 Base = declarative_base()
@@ -42,12 +44,17 @@ class Task(Base):
 
     @property
     def serialize(self):
+        due = self.due_date
+        now = datetime.date.today()
+        daysLeft = (due-now).days
+
         return {
             "id": self.id,
             "name": self.name,
             "commitment": self.commitment,
             "created_date": str(self.created_date),
             "due_date": str(self.due_date),
+            "days_left": daysLeft,
             "heads_up": str(self.heads_up),
             "enduser_id": self.enduser_id,
             "done": self.done
