@@ -1,7 +1,8 @@
-from flask import Flask, render_template, jsonify, make_response
+from flask import Flask, render_template, jsonify, make_response, abort
 
 from sqlalchemy import create_engine, asc, desc
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm.exc import NoResultFound
 from database_setup import Base, EndUser, Task
 
 from flask_cors import CORS, cross_origin
@@ -41,8 +42,11 @@ def create_task():
 @app.route("/ondeck/api/v1.0/tasks/<int:task_id>", methods=["GET"])
 def get_task(task_id):
     # Retrieve a task
-    task = session.query(Task).filter_by(id=task_id).one()
-    return jsonify(task=[task.serialize])
+    try:
+        task = session.query(Task).filter_by(id=task_id).one()
+        return jsonify(task=[task.serialize])
+    except NoResultFound:
+        abort(404)
 
 
 @app.route("/ondeck/api/v1.0/tasks/<int:task_id>", methods=["PUT"])
@@ -73,7 +77,7 @@ def unauthorized():
 
 @app.errorhandler(404)
 def not_found(error):
-    return make_response(jsonify({"error": "Not found"}), 404)
+    return make_response(jsonify({"error": "No items found"}), 404)
 
 
 if __name__ == "__main__":
