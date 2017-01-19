@@ -9,7 +9,6 @@ import datetime
 from datetime import date
 import time
 
-
 Base = declarative_base()
 
 
@@ -35,9 +34,9 @@ class Task(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String(100), nullable=False)
     commitment = Column(String(100), nullable=False)
-    created_date = Column(DateTime, default=datetime.datetime.utcnow)
+    created_date = Column(DateTime, default=datetime.datetime.utcnow)   # shouldn't need this
     due_date = Column(Date, nullable=False)
-    heads_up = Column(Date, nullable=False)
+    heads_up = Column(Date, nullable=False)                             # make this nullable=True
     enduser_id = Column(Integer, ForeignKey("enduser.id"), nullable=False)
     enduser = relationship(EndUser)
     done = Column(Boolean, nullable=False)
@@ -49,7 +48,7 @@ class Task(Base):
         daysLeft = (due-now).days
 
         return {
-            "id": self.id,
+            "uri": "http://localhost:5000/ondeck/api/v1.0/tasks/" + str(self.id),
             "name": self.name,
             "commitment": self.commitment,
             "created_date": str(self.created_date),

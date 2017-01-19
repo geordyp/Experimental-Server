@@ -1,0 +1,7 @@
+sudo pip install -U flask-cors
+sudo pip install flask-httpauth
+
+curl -u geordypaul:Appl3B3ar -i http://localhost:5000/ondeck/api/v1.0/tasks
+curl -u geordypaul:Appl3B3ar -i -H "Content-Type: application/json" -X POST -d '{"name":"write thank you cards", "commitment":"me", "due_date":"1-22-17", "heads_up":"1-21-17", "enduser_id":1}' http://localhost:5000/ondeck/api/v1.0/tasks
+curl -u geordypaul:Appl3B3ar -i -X DELETE http://localhost:5000/ondeck/api/v1.0/tasks/10
+curl -u geordypaul:Appl3B3ar -i -H "Content-Type: application/json" -X PUT -d '{"done":true}' http://localhost:5000/ondeck/api/v1.0/tasks/11
