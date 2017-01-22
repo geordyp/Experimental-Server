@@ -23,11 +23,16 @@
           <span data-bind="visible: done" class="label label-success">Done</span>
           <span data-bind="visible: !done()" class="label label-important">In Progress</span>
         </td>
-        <td><p><b data-bind="text: title">Task title</b></p><p data-bind="text: description">Task description</p></td>
+        <td><p><b data-bind="text: name"></b></p><p data-bind="text: notes"></p></td>
         <td>
-          <button data-bind="click $parent.beginEdit" class="btn">Edit</button>
-          <button data-bind="click $parent.remove" class="btn">Delete</button>
-          <span data-bind="visible: !done()"><button data-bind="click: $parent.markInProgress" class="btn">Mark In Progress</button></span>
+          <button data-bind="click: $parent.beginEdit" class="btn">Edit</button>
+          <button data-bind="click: $parent.remove" class="btn">Delete</button>
+          <span data-bind="visible: done">
+            <button data-bind="click: $parent.markInProgress" class="btn">Mark In Progress</button>
+          </span>
+          <span data-bind="visible: !done()">
+            <button data-bind="click: $parent.markDone" class="btn">Mark Done</button>
+          </span>
         </td>
       </tr>
       <!-- /ko -->

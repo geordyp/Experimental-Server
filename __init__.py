@@ -171,14 +171,14 @@ def update_task(task_id):
     # Update an existing task
     try:
         updatedTask = session.query(Task).filter(Task.id == task_id).one()
-        if not request.json or
-           "name" in request.json and type(request.json["name"]) != unicode or
-           "commitment" in request.json and type(request.json["commitment"]) != unicode or
-           "due_date" in request.json and type(request.json["due_date"]) != unicode or
-           "heads_up" in request.json and type(request.json["heads_up"]) != unicode or
-           "done" in request.json and type(request.json["done"]) != bool or
-           "completion_date" in request.json and type(request.json["completion_date"]) != unicode or
-           "notes" in request.json and type(request.json["notes"]) != unicode:
+        if (not request.json or
+            "name" in request.json and type(request.json["name"]) != unicode or
+            "commitment" in request.json and type(request.json["commitment"]) != unicode or
+            "due_date" in request.json and type(request.json["due_date"]) != unicode or
+            "heads_up" in request.json and type(request.json["heads_up"]) != unicode or
+            "done" in request.json and type(request.json["done"]) != bool or
+            "completion_date" in request.json and type(request.json["completion_date"]) != unicode or
+            "notes" in request.json and type(request.json["notes"]) != unicode):
             abort(400)
 
         updatedTask.name = request.json.get("name", updatedTask.name)

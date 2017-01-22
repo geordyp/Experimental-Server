@@ -26,7 +26,11 @@ class EndUser(Base):
             "id": self.id,
             "name": self.name,
             "vision": self.vision,
-            "uri": "http://localhost:5000/ondeck/api/v1.0/user/" + str(self.id)
+            "userURI": "http://localhost:5000/ondeck/api/v1.0/user/" + str(self.id),
+            "createTaskURI": "http://localhost:5000/ondeck/api/v1.0/tasks/" + str(self.id),
+            "doneTasksURI": "http://localhost:5000/ondeck/api/v1.0/tasks/" + str(self.id) + "/done",
+            "onDeckTasksURI": "http://localhost:5000/ondeck/api/v1.0/tasks/" + str(self.id) + "/on_deck",
+            "allTasksURI": "http://localhost:5000/ondeck/api/v1.0/tasks/" + str(self.id) + "/all",
         }
 
 
