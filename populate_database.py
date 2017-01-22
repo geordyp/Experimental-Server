@@ -18,15 +18,20 @@ DBSession = sessionmaker(bind=engine)
 # session.rollback()
 session = DBSession()
 
-user1 = EndUser(name="Paul", email="paul@gmail.com", vision=5)
+user1 = EndUser(name="Paul", pw_hash="lolololol", vision=5)
 session.add(user1)
+session.commit()
+
+user2 = EndUser(name="Geordy", pw_hash="lolololol", vision=2)
+session.add(user2)
 session.commit()
 
 task1 = Task(name="clean room",
              commitment="me",
              due_date="1-22-17",
              heads_up="1-21-17",
-             enduser_id=user1.id,
+             notes="do a good job",
+             enduser_id=user2.id,
              completion_date="1-21-17",
              done=True)
 session.add(task1)
@@ -35,8 +40,7 @@ session.commit()
 task2 = Task(name="purge inbox",
              commitment="me",
              due_date="1-23-17",
-             heads_up="1-23-17",
-             enduser_id=user1.id,
+             enduser_id=user2.id,
              done=False)
 session.add(task2)
 session.commit()
@@ -45,7 +49,7 @@ task3 = Task(name="finish reading that book",
              commitment="me",
              due_date="1-24-17",
              heads_up="1-22-17",
-             enduser_id=user1.id,
+             enduser_id=user2.id,
              done=False)
 session.add(task3)
 session.commit()
@@ -53,7 +57,6 @@ session.commit()
 task4 = Task(name="set date for ead",
              commitment="nsbe",
              due_date="1-24-17",
-             heads_up="1-24-17",
              enduser_id=user1.id,
              done=False)
 session.add(task4)
@@ -70,6 +73,7 @@ session.commit()
 
 task6 = Task(name="homework 1",
              commitment="math551",
+             notes="page 10: 10,11,12,23,44,45",
              due_date="1-25-17",
              heads_up="1-23-17",
              enduser_id=user1.id,
@@ -80,15 +84,17 @@ session.commit()
 
 task7 = Task(name="homework 2",
              commitment="math551",
+             notes="page 72: 13,23,34,45",
              due_date="1-27-17",
              heads_up="1-19-17",
-             enduser_id=user1.id,
+             enduser_id=user2.id,
              done=False)
 session.add(task7)
 session.commit()
 
 task8 = Task(name="homework 3",
              commitment="math551",
+             notes="page 56: 1,2,3,4,5",
              due_date="1-26-17",
              heads_up="1-21-17",
              enduser_id=user1.id,

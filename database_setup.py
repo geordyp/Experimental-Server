@@ -17,7 +17,7 @@ class EndUser(Base):
 
     id = Column(Integer, primary_key=True)
     name = Column(String(250), nullable=False)
-    email = Column(String(250), nullable=False)
+    pw_hash = Column(String(250), nullable=False)
     vision = Column(Integer, nullable=False)  # On Deck setting
 
     @property
@@ -25,7 +25,8 @@ class EndUser(Base):
         return {
             "id": self.id,
             "name": self.name,
-            "email": self.email
+            "vision": self.vision,
+            "uri": "http://localhost:5000/ondeck/api/v1.0/user/" + str(self.id)
         }
 
 
@@ -33,14 +34,15 @@ class Task(Base):
     __tablename__ = "task"
 
     id = Column(Integer, primary_key=True)
-    name = Column(String(100), nullable=False)
-    commitment = Column(String(100), nullable=False)
+    name = Column(String(250), nullable=False)
+    commitment = Column(String(250), nullable=False)
     due_date = Column(Date, nullable=False)
     heads_up = Column(Date, nullable=True)
-    enduser_id = Column(Integer, ForeignKey("enduser.id"), nullable=False)
-    enduser = relationship(EndUser)
     done = Column(Boolean, nullable=False)
     completion_date = Column(Date, nullable=True)
+    notes = Column(String(400), nullable=True)
+    enduser_id = Column(Integer, ForeignKey("enduser.id"), nullable=False)
+    enduser = relationship(EndUser)
 
     @property
     def serialize(self):
@@ -54,6 +56,7 @@ class Task(Base):
             "completion_date": str(self.completion_date),
             "due_date": str(self.due_date),
             "days_left": daysLeft,
+            "notes": self.notes,
             "heads_up": str(self.heads_up),
             "done": self.done,
             "uri": "http://localhost:5000/ondeck/api/v1.0/tasks/" + str(self.id)

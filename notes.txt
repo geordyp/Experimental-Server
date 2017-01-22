@@ -1,7 +1,32 @@
 sudo pip install -U flask-cors
 sudo pip install flask-httpauth
 
-curl -u geordypaul:Appl3B3ar -i http://localhost:5000/ondeck/api/v1.0/tasks
-curl -u geordypaul:Appl3B3ar -i -H "Content-Type: application/json" -X POST -d '{"name":"write thank you cards", "commitment":"me", "due_date":"1-22-17", "heads_up":"1-21-17", "enduser_id":1}' http://localhost:5000/ondeck/api/v1.0/tasks
+GET ALL TASKS
+curl -u geordypaul:Appl3B3ar -i -X GET http://localhost:5000/ondeck/api/v1.0/tasks/1/all
+
+GET DONE TASKS
+curl -u geordypaul:Appl3B3ar -i -X GET http://localhost:5000/ondeck/api/v1.0/tasks/1/done
+
+GET ON_DECK TASKS
+curl -u geordypaul:Appl3B3ar -i -X GET http://localhost:5000/ondeck/api/v1.0/tasks/1/on_deck
+
+CREATE TASK
+curl -u geordypaul:Appl3B3ar -i -H "Content-Type: application/json" -X POST -d '{"name":"do something awesome", "commitment":"me", "due_date":"1-23-17", "notes":"could be anything"}' http://localhost:5000/ondeck/api/v1.0/tasks/1
+
+GET TASK
+curl -u geordypaul:Appl3B3ar -i -X GET http://localhost:5000/ondeck/api/v1.0/tasks/1
+
+UPDATE TASK
+curl -u geordypaul:Appl3B3ar -i -H "Content-Type: application/json" -X PUT -d '{"done":true, "completion_date":"1-21-2017"}' http://localhost:5000/ondeck/api/v1.0/tasks/10
+
+DELETE TASK
 curl -u geordypaul:Appl3B3ar -i -X DELETE http://localhost:5000/ondeck/api/v1.0/tasks/10
-curl -u geordypaul:Appl3B3ar -i -H "Content-Type: application/json" -X PUT -d '{"done":true}' http://localhost:5000/ondeck/api/v1.0/tasks/11
+
+CREATE USER
+curl -u geordypaul:Appl3B3ar -i -H "Content-Type: application/json" -X POST -d '{"name":"geordypaul", "password":"pizzacat", "vision":3}' http://localhost:5000/ondeck/api/v1.0/user
+
+LOGIN USER
+curl -u geordypaul:Appl3B3ar -i -H "Content-Type: application/json" -X POST -d '{"name":"geordypaul", "password":"pizzacat"}' http://localhost:5000/ondeck/api/v1.0/user/login
+
+DELETE USER
+curl -u geordypaul:Appl3B3ar -i -X DELETE http://localhost:5000/ondeck/api/v1.0/user/3
