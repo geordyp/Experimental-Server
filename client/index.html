@@ -1,32 +1,43 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <title>On Deck</title>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel=stylesheet type=text/css href="styles/main.css">
+  <title>To Dooli</title>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel=stylesheet type=text/css href="styles/main.css">
+  <link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet">
 </head>
-
 <body>
-  <div class="container">
-    <table>
-      <thead>
-        <tr><th>commitment</th><th>task</th><th>due date</th><th>days left</th></tr>
-      </thead>
-      <tbody data-bind="foreach: allTasks">
-          <tr>
-              <td data-bind="text: commitment"></td>
-              <td data-bind="text: name"></td>
-              <td data-bind="text: dueDate"></td>
-              <td data-bind="text: daysLeft"></td>
-          </tr>
-      </tbody>
+  <div class="navbar">
+    <div class="navbar-inner">
+      <a class="brand" href="#">To Dooli</a>
+    </div>
+  </div>
+  <div id="main" class="container">
+    <table class="table table-striped">
+      <tr><td style="width: 1px;"></td><td><b>Task</b></td><td><b>Options</b></td></tr>
+      <!-- ko foreach: tasks -->
+      <tr>
+        <td>
+          <span data-bind="visible: done" class="label label-success">Done</span>
+          <span data-bind="visible: !done()" class="label label-important">In Progress</span>
+        </td>
+        <td><p><b data-bind="text: title">Task title</b></p><p data-bind="text: description">Task description</p></td>
+        <td>
+          <button data-bind="click $parent.beginEdit" class="btn">Edit</button>
+          <button data-bind="click $parent.remove" class="btn">Delete</button>
+          <span data-bind="visible: !done()"><button data-bind="click: $parent.markInProgress" class="btn">Mark In Progress</button></span>
+        </td>
+      </tr>
+      <!-- /ko -->
     </table>
+    <button data-bind="click: beginAdd" class="btn">Add Task</button>
   </div>
 
-  <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-  <script src="js/lib/knockout-3.2.0.js"></script>
+  <script src="http://ajax.aspnetcdn.com/ajax/jquery/jquery-1.9.0.js"></script>
+  <script src="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+  <script src="http://ajax.aspnetcdn.com/ajax/knockout/knockout-2.2.1.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>
