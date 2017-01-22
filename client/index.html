@@ -21,15 +21,11 @@
       <tr>
         <td>
           <span data-bind="visible: done" class="label label-success">Done</span>
-          <span data-bind="visible: !done()" class="label label-important">In Progress</span>
         </td>
         <td><p><b data-bind="text: name"></b></p><p data-bind="text: notes"></p></td>
         <td>
           <button data-bind="click: $parent.beginEdit" class="btn">Edit</button>
           <button data-bind="click: $parent.remove" class="btn">Delete</button>
-          <span data-bind="visible: done">
-            <button data-bind="click: $parent.markInProgress" class="btn">Mark In Progress</button>
-          </span>
           <span data-bind="visible: !done()">
             <button data-bind="click: $parent.markDone" class="btn">Mark Done</button>
           </span>
@@ -38,6 +34,60 @@
       <!-- /ko -->
     </table>
     <button data-bind="click: beginAdd" class="btn">Add Task</button>
+  </div>
+
+  <div id="login" class="modal hide fade" tabindex="=1" role="dialog" aria-labelledby="loginDialogLabel" aria-hidden="true">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+      <h3 id="loginDialogLabel">Login</h3>
+    </div>
+    <div class="modal-body">
+      <form class="form-horizontal">
+        <div class="control-group">
+          <label class="control-label" for="inputUsername">Username</label>
+          <div class="controls">
+            <input data-bind="value: username" type="text" id="inputUsername" placeholder="username" style="width: 150px;">
+          </div>
+        </div>
+        <div class="control-group">
+          <label class="control-label" for="inputPassword">Password</label>
+          <div class="controls">
+            <input data-bind="value: password" type="text" id="inputPassword" placeholder="password" style="width: 150px;">
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button data-bind="click: login" class="btn btn-primary">Login</button>
+      <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+    </div>
+  </div>
+
+  <div id="add" class="modal hide fade" tabindex="=1" role="dialog" aria-labelledby="addDialogLabel" aria-hidden="true">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+      <h3 id="addDialogLabel">Add Task</h3>
+    </div>
+    <div class="modal-body">
+      <form class="form-horizontal">
+        <div class="control-group">
+          <label class="control-label" for="inputTask">Task</label>
+          <div class="controls">
+            <input data-bind="value: title" type="text" id="inputTask" placeholder="Task title" style="width: 150px;">
+          </div>
+        </div>
+        <div class="control-group">
+          <label class="control-label" for="inputDescription">Description</label>
+          <div class="controls">
+            <input data-bind="value: description" type="text" id="inputDescription" placeholder="Description" style="width: 300px;">
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button data-bind="click: addTask" class="btn btn-primary">Add Task</button>
+      <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+    </div>
   </div>
 
   <script src="http://ajax.aspnetcdn.com/ajax/jquery/jquery-1.9.0.js"></script>

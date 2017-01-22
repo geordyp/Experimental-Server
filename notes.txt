@@ -11,7 +11,7 @@ GET ON_DECK TASKS
 curl -u geordypaul:Appl3B3ar -i -X GET http://localhost:5000/ondeck/api/v1.0/tasks/1/on_deck
 
 CREATE TASK
-curl -u geordypaul:Appl3B3ar -i -H "Content-Type: application/json" -X POST -d '{"name":"do something awesome", "commitment":"me", "due_date":"1-23-17", "notes":"could be anything"}' http://localhost:5000/ondeck/api/v1.0/tasks/1
+curl -u geordypaul:Appl3B3ar -i -H "Content-Type: application/json" -X POST -d '{"name":"do something awesome", "commitment":"me", "due_date":"1-23-17", "notes":"could be anything"}' http://localhost:5000/ondeck/api/v1.0/tasks/4
 
 GET TASK
 curl -u geordypaul:Appl3B3ar -i -X GET http://localhost:5000/ondeck/api/v1.0/tasks/1

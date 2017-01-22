@@ -30,7 +30,7 @@ class EndUser(Base):
             "createTaskURI": "http://localhost:5000/ondeck/api/v1.0/tasks/" + str(self.id),
             "doneTasksURI": "http://localhost:5000/ondeck/api/v1.0/tasks/" + str(self.id) + "/done",
             "onDeckTasksURI": "http://localhost:5000/ondeck/api/v1.0/tasks/" + str(self.id) + "/on_deck",
-            "allTasksURI": "http://localhost:5000/ondeck/api/v1.0/tasks/" + str(self.id) + "/all",
+            "activeTasksURI": "http://localhost:5000/ondeck/api/v1.0/tasks/" + str(self.id) + "/active",
         }
 
 

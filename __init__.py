@@ -119,7 +119,7 @@ def get_tasks(user_id, filter_list):
                     order_by(asc(Task.due_date)).all()
         except NoResultFound:
             abort(404)
-    elif filter_list == "all":
+    elif filter_list == "active":
         tasks = session.query(Task).\
                 filter_by(enduser_id=user_id).\
                 filter_by(done=False).\
