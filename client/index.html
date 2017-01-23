@@ -13,7 +13,7 @@
     <div class="header">
       <h1>To Dooli</h1>
       <span data-bind="if: user"><a data-bind="click: logout" href="#">Logout</a></span>
-      <span data-bind="ifnot: user"><a data-bind="click: beginLogin" href="#">Login</a></span>
+      <span data-bind="ifnot: user"><a data-bind="click: openLogin" href="#">Login</a></span>
       <span data-bind="if: user">&nbsp;&nbsp;<a data-bind="click: openSettings" href="#">Settings</a></span>
     </div>
     <div class="navbar">
@@ -41,7 +41,7 @@
       </tr>
       <!-- /ko -->
     </table>
-    <button data-bind="click: beginAdd" class="btn">Add Task</button>
+    <span data-bind="if: user"><button data-bind="click: openAdd" class="btn">Add Task</button></span>
   </div>
 
   <div id="login" class="modal hide fade" tabindex="=1" role="dialog" aria-labelledby="loginDialogLabel" aria-hidden="true">
@@ -100,12 +100,6 @@
             <input data-bind="value: verifyPassword" type="password" id="inputVerifyPassword" placeholder="password" style="width:150px;">
           </div>
         </div>
-        <div class="control-group has-error">
-          <label class="control-label" for="inputVision">Display tasks in <a href="#" data-toggle="popover" title="What is On Deck?" data-content="The On Deck view will gather the tasks that need your attention.">On Deck</a> that are due within __ days</label>
-          <div class="controls">
-            <input data-bind="value: vision" type="text" id="inputVision" placeholder="3" style="width:150px;">
-          </div>
-        </div>
         <div class="control-group">
           <div id="createUserErrorMessage" style="color:red; text-align:center;"></div>
         </div>
@@ -142,7 +136,7 @@
             <input data-bind="value: verifyPassword" type="password" id="inputVerifyPassword" placeholder="password" style="width:150px;">
           </div>
         </div>
-        <div class="control-group has-error">
+        <div class="control-group">
           <label class="control-label" for="inputVision">Display tasks in <a href="#" data-toggle="popover" title="What is On Deck?" data-content="The On Deck view will gather the tasks that need your attention.">On Deck</a> that are due within __ days</label>
           <div class="controls">
             <input data-bind="value: vision" type="text" id="inputVision" placeholder="3" style="width:150px;">
@@ -159,24 +153,45 @@
     </div>
   </div>
 
-  <div id="add" class="modal hide fade" tabindex="=1" role="dialog" aria-labelledby="addDialogLabel" aria-hidden="true">
+  <div id="addTask" class="modal hide fade" tabindex="=1" role="dialog" aria-labelledby="addTaskDialogLabel" aria-hidden="true">
     <div class="modal-header">
       <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-      <h3 id="addDialogLabel">Add Task</h3>
+      <h3 id="addTaskDialogLabel">Add Task</h3>
     </div>
     <div class="modal-body">
       <form class="form-horizontal">
         <div class="control-group">
           <label class="control-label" for="inputTask">Task</label>
           <div class="controls">
-            <input data-bind="value: title" type="text" id="inputTask" placeholder="Task title" style="width: 150px;">
+            <input data-bind="value: name" type="text" id="inputTask" placeholder="Homework 3" style="width: 150px;">
           </div>
         </div>
         <div class="control-group">
-          <label class="control-label" for="inputDescription">Description</label>
+          <label class="control-label" for="inputCommitment">Commitment</label>
           <div class="controls">
-            <input data-bind="value: description" type="text" id="inputDescription" placeholder="Description" style="width: 300px;">
+            <input data-bind="value: commitment" type="text" id="inputCommitment" placeholder="CIS 526" style="width: 300px;">
           </div>
+        </div>
+        <div class="control-group">
+          <label class="control-label" for="inputDueDate">Due Date</label>
+          <div class="controls">
+            <input data-bind="value: dueDate" type="date" id="inputDueDate" style="width: 300px;">
+          </div>
+        </div>
+        <div class="control-group">
+          <label class="control-label" for="inputHeadsUp">Add to On Deck</label>
+          <div class="controls">
+            <input data-bind="value: headsUp" type="date" id="inputHeadsUp" style="width: 300px;">
+          </div>
+        </div>
+        <div class="control-group">
+          <label class="control-label" for="inputNotes">Notes</label>
+          <div class="controls">
+            <input data-bind="value: notes" type="text" id="inputNotes" placeholder="page 56: 1,2,3,4,5" style="width: 300px;">
+          </div>
+        </div>
+        <div class="control-group">
+          <div id="addTaskErrorMessage" style="color:red; text-align:center;"></div>
         </div>
       </form>
     </div>

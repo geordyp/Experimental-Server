@@ -36,9 +36,12 @@ auth = HTTPBasicAuth()
 def create_user():
     # Create a new user
     if (not request.json or
-        "name" in request.json and type(request.json["name"]) != unicode or
-        "passsword" in request.json and type(request.json["password"]) != unicode or
-        "vision" in request.json and type(request.json["vision"]) != int):
+        not "name" in request.json or
+        not "password" in request.json):
+        abort(400)
+
+    if (type(request.json["name"]) != unicode or
+        type(request.json["password"]) != unicode):
         abort(400)
 
     # check if user name is already taken
@@ -47,8 +50,8 @@ def create_user():
 
     password_hash = make_pw_hash(request.json["name"], request.json["password"])
     newUser = EndUser(name=request.json["name"],
-                   pw_hash=password_hash,
-                   vision=request.json["vision"])
+                      pw_hash=password_hash,
+                      vision=3)
     session.add(newUser)
     session.commit()
     return make_response(jsonify(user=[newUser.serialize]), 201)
@@ -59,8 +62,12 @@ def create_user():
 def validate_login():
     # Validate user log in
     if (not request.json or
-        "name" in request.json and type(request.json["name"]) != unicode or
-        "passsword" in request.json and type(request.json["password"]) != unicode):
+        not "name" in request.json or
+        not "password" in request.json):
+        abort(400)
+
+    if (type(request.json["name"]) != unicode or
+        type(request.json["password"]) != unicode):
         abort(400)
 
     try:
@@ -129,16 +136,23 @@ def get_tasks(user_id, filter_list):
     return make_response(jsonify(tasks=[t.serialize for t in tasks]), 200)
 
 
-@app.route("/ondeck/api/v1.0/tasks/<int:user_id>", methods=["POST"])
+@app.route("/ondeck/api/v1.0/tasks/new/<int:user_id>", methods=["POST"])
 @auth.login_required
 def create_task(user_id):
     # Create a new task
     if (not request.json or
-        "name" in request.json and type(request.json["name"]) != unicode or
-        "commitment" in request.json and type(request.json["commitment"]) != unicode or
-        "due_date" in request.json and type(request.json["due_date"]) != unicode or
-        "heads_up" in request.json and type(request.json["heads_up"]) != unicode or
-        "notes" in request.json and type(request.json["notes"]) != unicode):
+        not "name" in request.json or
+        not "commitment" in request.json or
+        not "due_date" in request.json or
+        not "heads_up" in request.json or
+        not "notes" in request.json):
+        abort(400)
+
+    if (type(request.json["name"]) != unicode or
+        type(request.json["commitment"]) != unicode or
+        type(request.json["due_date"]) != unicode or
+        type(request.json["heads_up"]) != unicode or
+        type(request.json["notes"]) != unicode):
         abort(400)
 
     newTask = Task(name=request.json["name"],
@@ -146,8 +160,8 @@ def create_task(user_id):
                    due_date=request.json["due_date"],
                    enduser_id=user_id,
                    done=False,
-                   heads_up=request.json.get("heads_up", None),
-                   notes=request.json.get("notes", None),
+                   heads_up=request.json["heads_up"] if request.json["heads_up"] != "" else None,
+                   notes=request.json["notes"] if request.json["notes"] != "" else None,
                    completion_date=None)
     session.add(newTask)
     session.commit()

@@ -27,7 +27,7 @@ class EndUser(Base):
             "name": self.name,
             "vision": self.vision,
             "userURI": "http://localhost:5000/ondeck/api/v1.0/user/" + str(self.id),
-            "createTaskURI": "http://localhost:5000/ondeck/api/v1.0/tasks/" + str(self.id),
+            "createTaskURI": "http://localhost:5000/ondeck/api/v1.0/tasks/new/" + str(self.id),
             "doneTasksURI": "http://localhost:5000/ondeck/api/v1.0/tasks/" + str(self.id) + "/done",
             "onDeckTasksURI": "http://localhost:5000/ondeck/api/v1.0/tasks/" + str(self.id) + "/on_deck",
             "activeTasksURI": "http://localhost:5000/ondeck/api/v1.0/tasks/" + str(self.id) + "/active",
@@ -57,11 +57,11 @@ class Task(Base):
         return {
             "name": self.name,
             "commitment": self.commitment,
-            "completion_date": str(self.completion_date),
+            "completion_date": str(self.completion_date) if self.completion_date else None,
             "due_date": str(self.due_date),
             "days_left": daysLeft,
             "notes": self.notes,
-            "heads_up": str(self.heads_up),
+            "heads_up": str(self.heads_up) if self.heads_up else None,
             "done": self.done,
             "uri": "http://localhost:5000/ondeck/api/v1.0/tasks/" + str(self.id)
         }
