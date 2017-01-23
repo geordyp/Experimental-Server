@@ -99,7 +99,7 @@ function TasksViewModel() {
     self.ajax(self.registerUserURI, 'POST', user).done(function(data) {
       $('#createUser').modal('hide');
       self.user(data.user[0])
-      self.getTasks(self.user().activeTasksURI)
+      self.getActiveTasks()
     }).fail(function(jqXHR) {
       console.log(jqXHR);
       if (jqXHR.responseText.includes("This username is taken")) {
@@ -111,8 +111,21 @@ function TasksViewModel() {
     });
   }
 
+  self.getActiveTasks = function() {
+    self.getTasks(self.user().activeTasksURI)
+  }
+
+  self.getOnDeckTasks = function() {
+    self.getTasks(self.user().onDeckTasksURI)
+  }
+
+  self.getDoneTasks = function() {
+    self.getTasks(self.user().doneTasksURI)
+  }
+
   self.getTasks = function(taskURI) {
     self.ajax(taskURI, "GET").done(function(data) {
+      self.tasks([])
       for (var i = 0; i < data.tasks.length; i++) {
         self.tasks.push({
           name: ko.observable(data.tasks[i].name),

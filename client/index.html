@@ -12,9 +12,9 @@
   <div id="main" class="container">
     <div class="navbar">
       <div class="navbar-inner">
-        <a class="brand" href="#">All</a>
-        <a class="brand" href="#">On Deck</a>
-        <a class="brand" href="#">Done</a>
+        <a data-bind="click: getActiveTasks" class="brand" href="#">All</a>
+        <a data-bind="click: getOnDeckTasks" class="brand" href="#">On Deck</a>
+        <a data-bind="click: getDoneTasks" class="brand" href="#">Done</a>
       </div>
     </div>
     <table class="table table-striped">
