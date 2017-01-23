@@ -8,8 +8,8 @@ function TasksViewModel() {
     password: "Appl3B3ar"
   };
 
-  self.user = ko.observable();
-  self.tasks = ko.observableArray();
+  self.user = ko.observable(null);
+  self.tasks = ko.observableArray([]);
 
   self.ajax = function(uri, method, data) {
     var request = {
@@ -93,6 +93,15 @@ function TasksViewModel() {
     }).fail(function(jqXHR) {
       $("#loginErrorMessage").html("Incorrect username or password.");
     });
+  }
+
+  self.logout = function() {
+    self.user(null);
+    self.tasks([]);
+  }
+
+  self.openSettings = function() {
+    $('#settings').modal('show');
   }
 
   self.registerUser = function(user) {
