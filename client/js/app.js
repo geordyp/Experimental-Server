@@ -2,6 +2,7 @@ function TasksViewModel() {
   var self = this;
   self.tasksURI = "http://localhost:5000/ondeck/api/v1.0/tasks/1/all";
   self.loginURI = "http://localhost:5000/ondeck/api/v1.0/user/login";
+  self.registerUserURI = "http://localhost:5000/ondeck/api/v1.0/user";
   self.serverLogin = {
     username: "geordypaul",
     password: "Appl3B3ar"
@@ -9,8 +10,6 @@ function TasksViewModel() {
 
   self.user = ko.observable();
   self.tasks = ko.observableArray();
-
-  self.error
 
   self.ajax = function(uri, method, data) {
     var request = {
@@ -26,7 +25,7 @@ function TasksViewModel() {
                              "Basic " + btoa(self.serverLogin.username + ":" + self.serverLogin.password));
       },
       error: function(jqXHR) {
-        console.log("ajax error: " + jqXHR.responseText + " " + jqXHR.status);
+        console.log("ajax error: " + jqXHR.responseText);
       }
     };
     return $.ajax(request);
@@ -82,29 +81,38 @@ function TasksViewModel() {
     $('#login').modal('show');
   }
 
-  self.login = function(user) {
-    self.ajax(self.loginURI, 'POST', user).done(function(data) {
-      self.user(data.user[0])
-      self.getTasks();
-    }).fail(function(jqXHR) {
-      if (jqXHR.status == 403)
-        setTimeout(self.beginLogin, 500);
-    });
+  self.beginUserRegistration = function() {
+    $('#createUser').modal('show');
   }
 
   self.login = function(user) {
     self.ajax(self.loginURI, 'POST', user).done(function(data) {
       $('#login').modal('hide');
       self.user(data.user[0])
-      self.getActiveTasks()
+      self.getTasks(self.user().activeTasksURI)
     }).fail(function(jqXHR) {
-      if (jqXHR.status == 403)
-        setTimeout(self.beginLogin, 500);
+      $("#loginErrorMessage").html("Incorrect username or password.");
     });
   }
 
-  self.getActiveTasks = function() {
-    self.ajax(self.user().activeTasksURI, "GET").done(function(data) {
+  self.registerUser = function(user) {
+    self.ajax(self.registerUserURI, 'POST', user).done(function(data) {
+      $('#createUser').modal('hide');
+      self.user(data.user[0])
+      self.getTasks(self.user().activeTasksURI)
+    }).fail(function(jqXHR) {
+      console.log(jqXHR);
+      if (jqXHR.responseText.includes("This username is taken")) {
+        $("#createUserErrorMessage").html("The username is taken.");
+      }
+      else {
+        $("#createUserErrorMessage").html("We couldn't create the account.");
+      }
+    });
+  }
+
+  self.getTasks = function(taskURI) {
+    self.ajax(taskURI, "GET").done(function(data) {
       for (var i = 0; i < data.tasks.length; i++) {
         self.tasks.push({
           name: ko.observable(data.tasks[i].name),
@@ -175,11 +183,68 @@ function LoginViewModel() {
       password: self.password()
     });
   }
+
+  self.createUser = function() {
+    tasksViewModel.beginUserRegistration();
+  }
+}
+
+function CreateUserViewModel() {
+  var self = this;
+  self.username = ko.observable();
+  self.password = ko.observable();
+  self.verifyPassword = ko.observable();
+  self.vision = ko.observable();
+
+  self.createUser = function() {
+    var reUsername = /^[a-zA-Z0-9]+$/;
+    var rePassword = /^.{3,20}$/;
+
+    // validate username
+    if (!reUsername.test(self.username())) {
+      $("#createUserErrorMessage").html("Invalid username.");
+      $("#inputNewUsername").val("");
+    }
+    // validate password
+    else if (!rePassword.test(self.password())) {
+      $("#createUserErrorMessage").html("Invalid password.");
+      $("#inputNewPassword").val("");
+      $("#inputVerifyPassword").val("");
+    }
+    // check if passwords match
+    else if (self.password() !== self.verifyPassword()) {
+      $("#createUserErrorMessage").html("The passwords don't match.");
+      $("#inputNewPassword").val("");
+      $("#inputVerifyPassword").val("");
+    }
+    // validate vision
+    else if (self.vision() > 30 || self.vision() < 1 || !Number.isInteger(parseInt(self.vision()))) {
+      $("#createUserErrorMessage").html("Days should be an integer between 1 and 30.");
+      $("#inputVision").val("");
+    }
+    // check if all fields are filled
+    else if (self.username() === "" || self.password() === "" || self.verifyPassword() === "" || self.vision() === "") {
+      $("#createUserErrorMessage").html("All inputs need to be filled.");
+    }
+    else {
+      tasksViewModel.registerUser({
+        name: self.username(),
+        password: self.password(),
+        vision: parseInt(self.vision())
+      });
+    }
+  }
 }
 
 var tasksViewModel = new TasksViewModel();
-var addTaskViewModel = new AddTaskViewModel();
 var loginViewModel = new LoginViewModel();
+var createUserViewModel = new CreateUserViewModel();
+var addTaskViewModel = new AddTaskViewModel();
 ko.applyBindings(tasksViewModel, $('#main')[0]);
 ko.applyBindings(loginViewModel, $('#login')[0]);
+ko.applyBindings(createUserViewModel, $('#createUser')[0]);
 ko.applyBindings(addTaskViewModel, $('#add')[0]);
+
+$(document).ready(function(){
+    $('[data-toggle="popover"]').popover();
+});
