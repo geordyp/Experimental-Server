@@ -1,6 +1,5 @@
 function TasksViewModel() {
   var self = this;
-  self.tasksURI = "http://localhost:5000/ondeck/api/v1.0/tasks/1/all";
   self.loginURI = "http://localhost:5000/ondeck/api/v1.0/user/login";
   self.registerUserURI = "http://localhost:5000/ondeck/api/v1.0/user";
   self.serverLogin = {
@@ -74,6 +73,60 @@ function TasksViewModel() {
     $('#settings').modal('show');
   }
 
+  self.openAdd = function() {
+    $('#addTask').modal('show');
+  }
+
+  self.addTask = function(task) {
+    self.ajax(self.user().createTaskURI, 'POST', task).done(function(data) {
+      $('#addTask').modal('hide');
+
+      self.tasks([]);
+      self.getActiveTasks();
+    }).fail(function(jqXHR) {
+      console.log(jqXHR);
+      $("#addTaskErrorMessage").html("We couldn't create the task.");
+    });
+  }
+
+  self.openEdit = function(task) {
+    editTaskViewModel.setTask(task);
+  }
+
+  self.editTask = function(taskURI, task) {
+    self.ajax(taskURI, 'PUT', task).done(function(data) {
+        $('#editTask').modal('hide');
+
+        self.tasks([]);
+        self.getActiveTasks();
+    }).fail(function(jqXHR) {
+      console.log(jqXHR);
+      $("#editTaskErrorMessage").html("We couldn't update the task.");
+    });
+  }
+
+  self.openDelete = function(task) {
+    deleteTaskViewModel.setTask(task);
+  }
+
+  self.deleteTask = function(taskURI) {
+    self.ajax(taskURI, 'DELETE').done(function() {
+      $('#deleteTask').modal('hide');
+
+      self.tasks([]);
+      self.getActiveTasks();
+    }).fail(function(jqXHR) {
+      console.log(jqXHR);
+      $("#deleteTaskErrorMessage").html("We couldn't delete the task.");
+    });
+  }
+
+  self.markDone = function(task) {
+    self.ajax(task.uri(), 'PUT', { done: true }).done(function(res) {
+      self.updateTask(task, res.task);
+    });
+  }
+
   self.getActiveTasks = function() {
     self.getTasks(self.user().activeTasksURI)
   }
@@ -102,59 +155,6 @@ function TasksViewModel() {
           uri: ko.observable(data.tasks[i].uri)
         });
       }
-    });
-  }
-
-  self.openAdd = function() {
-    $('#addTask').modal('show');
-  }
-
-  self.addTask = function(task) {
-    self.ajax(self.user().createTaskURI, 'POST', task).done(function(data) {
-      $('#addTask').modal('hide');
-
-      self.tasks.push({
-        name: ko.observable(data.task.name),
-        commitment: ko.observable(data.task.commitment),
-        notes: ko.observable(data.task.notes),
-        dueDate: ko.observable(data.task.due_date),
-        daysLeft: ko.observable(data.task.days_left),
-        headsUp: ko.observable(data.task.heads_up),
-        done: ko.observable(data.task.done),
-        completionDate: ko.observable(data.task.completion_date),
-        uri: ko.observable(data.task.uri)
-      });
-    });
-  }
-
-  self.beginEdit = function(task) {
-    editTaskViewModel.setTask(task);
-    $('#edit').modal('show');
-  }
-
-  self.edit = function(task, data) {
-    self.ajax(task.uri(), 'PUT', data).done(function(res) {
-      self.updateTask(task, res.task);
-    });
-  }
-
-  self.updateTask = function(task, newTask) {
-    var i = self.tasks.indexOf(task);
-    self.tasks()[i].uri(newTask.uri);
-    self.tasks()[i].title(newTask.title);
-    self.tasks()[i].description(newTask.description);
-    self.tasks()[i].done(newTask.done);
-  }
-
-  self.remove = function(task) {
-    self.ajax(task.uri(), 'DELETE').done(function() {
-      self.tasks.remove(task);
-    });
-  }
-
-  self.markDone = function(task) {
-    self.ajax(task.uri(), 'PUT', { done: true }).done(function(res) {
-      self.updateTask(task, res.task);
     });
   }
 
@@ -260,36 +260,79 @@ function AddTaskViewModel() {
 
 function EditTaskViewModel() {
   var self = this;
-  self.title = ko.observable();
-  self.description = ko.observable();
-  self.done = ko.observable();
+  self.task = null;
+  self.name = ko.observable("");
+  self.commitment = ko.observable("");
+  self.dueDate = ko.observable("");
+  self.headsUp = ko.observable("");
+  self.notes = ko.observable("");
 
   self.setTask = function(task) {
     self.task = task;
-    self.title(task.title());
-    self.description(task.description());
-    self.done(task.done());
-    $('edit').modal('show');
+    self.name(task.name());
+    self.commitment(task.commitment());
+    self.dueDate(task.dueDate());
+    self.headsUp((task.headsUp() == null) ? "" : task.headsUp());
+    self.notes((task.notes() == null) ? "" : task.notes());
+
+    $('#editTask').modal('show');
   }
 
   self.editTask = function() {
-    $('#edit').modal('hide');
-    tasksViewModel.edit(self.task, {
-      title: self.title(),
-      description: self.description() ,
-      done: self.done()
-    });
+    // check if the needed fields are filled
+    if (self.name() === "" || self.commitment() === "" || self.dueDate() === "") {
+      $("#editTaskErrorMessage").html("Please fill in Task, Commitment, and Due Date.");
+    }
+    else {
+      tasksViewModel.editTask(self.task.uri(), {
+        name: self.name(),
+        commitment: self.commitment(),
+        due_date: self.dueDate(),
+        heads_up: self.headsUp(),
+        notes: self.notes()
+      });
+
+      self.name("");
+      self.commitment("");
+      self.dueDate("");
+      self.headsUp("");
+      self.notes("");
+      $("#editTaskErrorMessage").html("");
+    }
   }
 }
+
+function DeleteTaskViewModel() {
+  var self = this;
+  self.task = null;
+  self.name = ko.observable("");
+
+  self.setTask = function(task) {
+    self.task = task;
+    self.name(task.name());
+
+    $('#deleteTask').modal('show');
+  }
+
+  self.deleteTask = function() {
+    tasksViewModel.deleteTask(self.task.uri());
+    $("#deleteTaskErrorMessage").html("");
+  }
+}
+
 
 var tasksViewModel = new TasksViewModel();
 var loginViewModel = new LoginViewModel();
 var createUserViewModel = new CreateUserViewModel();
 var addTaskViewModel = new AddTaskViewModel();
+var editTaskViewModel = new EditTaskViewModel();
+var deleteTaskViewModel = new DeleteTaskViewModel();
 ko.applyBindings(tasksViewModel, $('#main')[0]);
 ko.applyBindings(loginViewModel, $('#login')[0]);
 ko.applyBindings(createUserViewModel, $('#createUser')[0]);
 ko.applyBindings(addTaskViewModel, $('#addTask')[0]);
+ko.applyBindings(editTaskViewModel, $('#editTask')[0]);
+ko.applyBindings(deleteTaskViewModel, $('#deleteTask')[0]);
 
 $(document).ready(function(){
     $('[data-toggle="popover"]').popover();

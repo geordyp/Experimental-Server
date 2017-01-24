@@ -185,23 +185,39 @@ def update_task(task_id):
     # Update an existing task
     try:
         updatedTask = session.query(Task).filter(Task.id == task_id).one()
-        if (not request.json or
-            "name" in request.json and type(request.json["name"]) != unicode or
-            "commitment" in request.json and type(request.json["commitment"]) != unicode or
-            "due_date" in request.json and type(request.json["due_date"]) != unicode or
-            "heads_up" in request.json and type(request.json["heads_up"]) != unicode or
-            "done" in request.json and type(request.json["done"]) != bool or
-            "completion_date" in request.json and type(request.json["completion_date"]) != unicode or
-            "notes" in request.json and type(request.json["notes"]) != unicode):
+        if (not request.json):
+            abort(400)
+
+        if ("name" in request.json and type(request.json["name"]) != unicode):
+            print("here1");
+            abort(400)
+        if ("commitment" in request.json and type(request.json["commitment"]) != unicode):
+            print("here2");
+            abort(400)
+        if ("due_date" in request.json and type(request.json["due_date"]) != unicode):
+            print("here3");
+            abort(400)
+        if ("heads_up" in request.json and type(request.json["heads_up"]) != unicode):
+            print("here4");
+            abort(400)
+        if ("done" in request.json and type(request.json["done"]) != bool):
+            print("here5");
+            abort(400)
+        if ("completion_date" in request.json and type(request.json["completion_date"]) != unicode):
+            print("here6");
+            abort(400)
+        if ("notes" in request.json and type(request.json["notes"]) != unicode):
+            print("here7");
             abort(400)
 
         updatedTask.name = request.json.get("name", updatedTask.name)
         updatedTask.commitment = request.json.get("commitment", updatedTask.commitment)
         updatedTask.due_date = request.json.get("due_date", updatedTask.due_date)
-        updatedTask.heads_up = request.json.get("heads_up", updatedTask.heads_up)
+        updatedTask.heads_up = None if request.json["heads_up"] == "" else request.json.get("heads_up", updatedTask.heads_up)
         updatedTask.done = request.json.get("done", updatedTask.done)
         updatedTask.completion_date = request.json.get("completion_date", updatedTask.completion_date)
-        updatedTask.notes = request.json.get("notes", updatedTask.notes)
+        updatedTask.notes = None if request.json["notes"] == "" else request.json.get("notes", updatedTask.notes)
+        session.commit()
         return make_response(jsonify(task=[updatedTask.serialize]), 202)
     except NoResultFound:
         abort(404)

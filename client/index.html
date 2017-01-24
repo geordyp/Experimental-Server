@@ -32,8 +32,8 @@
         </td>
         <td><p><b data-bind="text: name"></b></p><p data-bind="text: notes"></p></td>
         <td>
-          <button data-bind="click: $parent.beginEdit" class="btn">Edit</button>
-          <button data-bind="click: $parent.remove" class="btn">Delete</button>
+          <button data-bind="click: $parent.openEdit" class="btn">Edit</button>
+          <button data-bind="click: $parent.openDelete" class="btn">Delete</button>
           <span data-bind="visible: !done()">
             <button data-bind="click: $parent.markDone" class="btn">Mark Done</button>
           </span>
@@ -163,31 +163,31 @@
         <div class="control-group">
           <label class="control-label" for="inputTask">Task</label>
           <div class="controls">
-            <input data-bind="value: name" type="text" id="inputTask" placeholder="Homework 3" style="width: 150px;">
+            <input data-bind="value: name" type="text" id="inputTask" style="width: 150px;">
           </div>
         </div>
         <div class="control-group">
           <label class="control-label" for="inputCommitment">Commitment</label>
           <div class="controls">
-            <input data-bind="value: commitment" type="text" id="inputCommitment" placeholder="CIS 526" style="width: 300px;">
+            <input data-bind="value: commitment" type="text" id="inputCommitment" style="width: 150px;">
           </div>
         </div>
         <div class="control-group">
           <label class="control-label" for="inputDueDate">Due Date</label>
           <div class="controls">
-            <input data-bind="value: dueDate" type="date" id="inputDueDate" style="width: 300px;">
+            <input data-bind="value: dueDate" type="date" id="inputDueDate" style="width: 150px;">
           </div>
         </div>
         <div class="control-group">
           <label class="control-label" for="inputHeadsUp">Add to On Deck</label>
           <div class="controls">
-            <input data-bind="value: headsUp" type="date" id="inputHeadsUp" style="width: 300px;">
+            <input data-bind="value: headsUp" type="date" id="inputHeadsUp" style="width: 150px;">
           </div>
         </div>
         <div class="control-group">
           <label class="control-label" for="inputNotes">Notes</label>
           <div class="controls">
-            <input data-bind="value: notes" type="text" id="inputNotes" placeholder="page 56: 1,2,3,4,5" style="width: 300px;">
+            <input data-bind="value: notes" type="text" id="inputNotes" style="width: 150px;">
           </div>
         </div>
         <div class="control-group">
@@ -197,6 +197,76 @@
     </div>
     <div class="modal-footer">
       <button data-bind="click: addTask" class="btn btn-primary">Add Task</button>
+      <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+    </div>
+  </div>
+
+  <div id="editTask" class="modal hide fade" tabindex="=1" role="dialog" aria-labelledby="editTaskDialogLabel" aria-hidden="true">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+      <h3 id="editTaskDialogLabel">Edit Task</h3>
+    </div>
+    <div class="modal-body">
+      <form class="form-horizontal">
+        <div class="control-group">
+          <label class="control-label" for="inputTask">Task</label>
+          <div class="controls">
+            <input data-bind="value: name" type="text" id="inputTask" style="width: 150px;">
+          </div>
+        </div>
+        <div class="control-group">
+          <label class="control-label" for="inputCommitment">Commitment</label>
+          <div class="controls">
+            <input data-bind="value: commitment" type="text" id="inputCommitment" style="width: 150px;">
+          </div>
+        </div>
+        <div class="control-group">
+          <label class="control-label" for="inputDueDate">Due Date</label>
+          <div class="controls">
+            <input data-bind="value: dueDate" type="date" id="inputDueDate" style="width: 150px;">
+          </div>
+        </div>
+        <div class="control-group">
+          <label class="control-label" for="inputHeadsUp">Add to On Deck</label>
+          <div class="controls">
+            <input data-bind="value: headsUp" type="date" id="inputHeadsUp" style="width: 150px;">
+          </div>
+        </div>
+        <div class="control-group">
+          <label class="control-label" for="inputNotes">Notes</label>
+          <div class="controls">
+            <input data-bind="value: notes" type="text" id="inputNotes" style="width: 150px;">
+          </div>
+        </div>
+        <div class="control-group">
+          <div id="editTaskErrorMessage" style="color:red; text-align:center;"></div>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button data-bind="click: editTask" class="btn btn-primary">Edit Task</button>
+      <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+    </div>
+  </div>
+
+  <div id="deleteTask" class="modal hide fade" tabindex="=1" role="dialog" aria-labelledby="deleteTaskDialogLabel" aria-hidden="true">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+      <h3 id="deleteTaskDialogLabel">Delete Task</h3>
+    </div>
+    <div class="modal-body">
+      <form class="form-horizontal">
+        <div class="control-group">
+          <div style="text-align:center;">Are you sure you want to delete this task?<br></div>
+          <div data-bind="text: name"style="text-align:center;"></div>
+        </div>
+        <div class="control-group">
+          <div id="deleteTaskErrorMessage" style="color:red; text-align:center;"></div>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button data-bind="click: deleteTask" class="btn btn-primary">Delete Task</button>
       <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
     </div>
   </div>
