@@ -10,6 +10,7 @@ function TasksViewModel() {
   self.user = ko.observable(null);
   self.tasks = ko.observableArray([]);
   self.doneView = ko.observable(null);
+  var currentView = "";
 
   self.ajax = function(uri, method, data) {
     var request = {
@@ -111,7 +112,12 @@ function TasksViewModel() {
         $('#editTask').modal('hide');
 
         self.tasks([]);
-        self.getActiveTasks();
+        if (currentView === "active")
+          self.getActiveTasks();
+        else if (currentView === "ondeck")
+          self.getOnDeckTasks();
+        else
+          self.getDoneTasks();
     }).fail(function(jqXHR) {
       console.log(jqXHR);
       $("#editTaskErrorMessage").html("We couldn't update the task.");
@@ -127,7 +133,12 @@ function TasksViewModel() {
       $('#deleteTask').modal('hide');
 
       self.tasks([]);
-      self.getActiveTasks();
+      if (currentView === "active")
+        self.getActiveTasks();
+      else if (currentView === "ondeck")
+        self.getOnDeckTasks();
+      else
+        self.getDoneTasks();
     }).fail(function(jqXHR) {
       console.log(jqXHR);
       $("#deleteTaskErrorMessage").html("We couldn't delete the task.");
@@ -158,7 +169,12 @@ function TasksViewModel() {
 
     self.ajax(task.uri(), 'PUT', data).done(function(data) {
         self.tasks([]);
-        self.getActiveTasks();
+        if (currentView === "active")
+          self.getActiveTasks();
+        else if (currentView === "ondeck")
+          self.getOnDeckTasks();
+        else
+          self.getDoneTasks();
     }).fail(function(jqXHR) {
       console.log(jqXHR);
     });
@@ -169,6 +185,7 @@ function TasksViewModel() {
     $("#pill-ondeck").removeClass("active");
     $("#pill-done").removeClass("active");
     self.doneView(false);
+    currentView = "active";
     self.getTasks(self.user().activeTasksURI)
   }
 
@@ -177,6 +194,7 @@ function TasksViewModel() {
     $("#pill-active").removeClass("active");
     $("#pill-done").removeClass("active");
     self.doneView(false);
+    currentView = "ondeck";
     self.getTasks(self.user().onDeckTasksURI)
   }
 
@@ -185,6 +203,7 @@ function TasksViewModel() {
     $("#pill-ondeck").removeClass("active");
     $("#pill-active").removeClass("active");
     self.doneView(true);
+    currentView = "done";
     self.getTasks(self.user().doneTasksURI)
   }
 

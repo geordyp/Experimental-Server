@@ -1,3 +1,7 @@
+TO DO:
+- style overhaul
+- don't empty the list if you don't have to
+
 sudo pip install -U flask-cors
 sudo pip install flask-httpauth
 
