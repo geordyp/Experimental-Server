@@ -9,7 +9,6 @@ import datetime
 from datetime import date
 import time
 
-
 Base = declarative_base()
 
 
@@ -18,14 +17,20 @@ class EndUser(Base):
 
     id = Column(Integer, primary_key=True)
     name = Column(String(250), nullable=False)
-    email = Column(String(250), nullable=False)
+    pw_hash = Column(String(250), nullable=False)
+    vision = Column(Integer, nullable=False)  # On Deck setting
 
     @property
     def serialize(self):
         return {
             "id": self.id,
             "name": self.name,
-            "email": self.email
+            "vision": self.vision,
+            "userURI": "http://localhost:5000/ondeck/api/v1.0/user/" + str(self.id),
+            "createTaskURI": "http://localhost:5000/ondeck/api/v1.0/tasks/new/" + str(self.id),
+            "doneTasksURI": "http://localhost:5000/ondeck/api/v1.0/tasks/" + str(self.id) + "/done",
+            "onDeckTasksURI": "http://localhost:5000/ondeck/api/v1.0/tasks/" + str(self.id) + "/on_deck",
+            "activeTasksURI": "http://localhost:5000/ondeck/api/v1.0/tasks/" + str(self.id) + "/active",
         }
 
 
@@ -33,14 +38,15 @@ class Task(Base):
     __tablename__ = "task"
 
     id = Column(Integer, primary_key=True)
-    name = Column(String(100), nullable=False)
-    commitment = Column(String(100), nullable=False)
-    created_date = Column(DateTime, default=datetime.datetime.utcnow)
+    name = Column(String(250), nullable=False)
+    commitment = Column(String(250), nullable=False)
     due_date = Column(Date, nullable=False)
-    heads_up = Column(Date, nullable=False)
+    heads_up = Column(Date, nullable=True)
+    done = Column(Boolean, nullable=False)
+    completion_date = Column(Date, nullable=True)
+    notes = Column(String(400), nullable=True)
     enduser_id = Column(Integer, ForeignKey("enduser.id"), nullable=False)
     enduser = relationship(EndUser)
-    done = Column(Boolean, nullable=False)
 
     @property
     def serialize(self):
@@ -49,15 +55,15 @@ class Task(Base):
         daysLeft = (due-now).days
 
         return {
-            "id": self.id,
             "name": self.name,
             "commitment": self.commitment,
-            "created_date": str(self.created_date),
+            "completion_date": str(self.completion_date) if self.completion_date else None,
             "due_date": str(self.due_date),
             "days_left": daysLeft,
-            "heads_up": str(self.heads_up),
-            "enduser_id": self.enduser_id,
-            "done": self.done
+            "notes": self.notes,
+            "heads_up": str(self.heads_up) if self.heads_up else None,
+            "done": self.done,
+            "uri": "http://localhost:5000/ondeck/api/v1.0/tasks/" + str(self.id)
         }
 
 
