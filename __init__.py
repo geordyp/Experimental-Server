@@ -85,6 +85,25 @@ def validate_login():
         abort(404)
 
 
+@app.route("/ondeck/api/v1.0/user/<int:user_id>", methods=["PUT"])
+@auth.login_required
+def update_user(user_id):
+    # Update a user
+    try:
+        updatedUser = session.query(EndUser).filter(EndUser.id == user_id).one()
+        if (not request.json):
+            abort(400)
+
+        if "vision" in request.json and type(request.json["vision"]) != int:
+            abort(400)
+
+        updatedUser.vision = request.json.get("vision", updatedUser.vision)
+        session.commit()
+        return make_response(jsonify(user=[updatedUser.serialize]), 202)
+    except NoResultFound:
+        abort(404)
+
+
 @app.route("/ondeck/api/v1.0/user/<int:user_id>", methods=["DELETE"])
 @auth.login_required
 def delete_user(user_id):
@@ -188,35 +207,25 @@ def update_task(task_id):
         if (not request.json):
             abort(400)
 
-        if ("name" in request.json and type(request.json["name"]) != unicode):
-            print("here1");
-            abort(400)
-        if ("commitment" in request.json and type(request.json["commitment"]) != unicode):
-            print("here2");
-            abort(400)
-        if ("due_date" in request.json and type(request.json["due_date"]) != unicode):
-            print("here3");
-            abort(400)
-        if ("heads_up" in request.json and type(request.json["heads_up"]) != unicode):
-            print("here4");
-            abort(400)
-        if ("done" in request.json and type(request.json["done"]) != bool):
-            print("here5");
-            abort(400)
-        if ("completion_date" in request.json and type(request.json["completion_date"]) != unicode):
-            print("here6");
-            abort(400)
-        if ("notes" in request.json and type(request.json["notes"]) != unicode):
-            print("here7");
+        if ("name" in request.json and type(request.json["name"]) != unicode or
+            "commitment" in request.json and type(request.json["commitment"]) != unicode or
+            "due_date" in request.json and type(request.json["due_date"]) != unicode or
+            "heads_up" in request.json and type(request.json["heads_up"]) != unicode or
+            "done" in request.json and type(request.json["done"]) != bool or
+            "completion_date" in request.json and type(request.json["completion_date"]) != unicode or
+            "notes" in request.json and type(request.json["notes"]) != unicode):
             abort(400)
 
         updatedTask.name = request.json.get("name", updatedTask.name)
         updatedTask.commitment = request.json.get("commitment", updatedTask.commitment)
         updatedTask.due_date = request.json.get("due_date", updatedTask.due_date)
-        updatedTask.heads_up = None if request.json["heads_up"] == "" else request.json.get("heads_up", updatedTask.heads_up)
         updatedTask.done = request.json.get("done", updatedTask.done)
-        updatedTask.completion_date = request.json.get("completion_date", updatedTask.completion_date)
-        updatedTask.notes = None if request.json["notes"] == "" else request.json.get("notes", updatedTask.notes)
+        updatedTask.heads_up = request.json.get("heads_up", updatedTask.heads_up)
+        updatedTask.heads_up = None if updatedTask.heads_up == "" else updatedTask.heads_up
+        updatedTask.completion_date =  request.json.get("completion_date", updatedTask.completion_date)
+        updatedTask.completion_date =  None if updatedTask.completion_date == "" else updatedTask.completion_date
+        updatedTask.notes = request.json.get("notes", updatedTask.notes)
+        updatedTask.notes = None if updatedTask.notes == "" else updatedTask.notes
         session.commit()
         return make_response(jsonify(task=[updatedTask.serialize]), 202)
     except NoResultFound:

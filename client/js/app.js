@@ -31,12 +31,12 @@ function TasksViewModel() {
   }
 
   self.openLogin = function() {
-    $('#login').modal('show');
+    $("#login").modal("show");
   }
 
   self.login = function(user) {
-    self.ajax(self.loginURI, 'POST', user).done(function(data) {
-      $('#login').modal('hide');
+    self.ajax(self.loginURI, "POST", user).done(function(data) {
+      $("#login").modal("hide");
       self.user(data.user[0])
       self.getActiveTasks()
     }).fail(function(jqXHR) {
@@ -50,14 +50,14 @@ function TasksViewModel() {
   }
 
   self.openUserRegistration = function() {
-    $('#createUser').modal('show');
+    $("#createUser").modal("show");
   }
 
   self.registerUser = function(user) {
-    self.ajax(self.registerUserURI, 'POST', user).done(function(data) {
-      $('#createUser').modal('hide');
-      self.user(data.user[0])
-      self.getActiveTasks()
+    self.ajax(self.registerUserURI, "POST", user).done(function(data) {
+      $("#createUser").modal("hide");
+      self.user(data.user[0]);
+      self.getActiveTasks();
     }).fail(function(jqXHR) {
       console.log(jqXHR);
       if (jqXHR.responseText.includes("This username is taken")) {
@@ -69,17 +69,28 @@ function TasksViewModel() {
     });
   }
 
+  self.updateUser = function(userURI, data) {
+    self.ajax(userURI, 'PUT', data).done(function(data) {
+        $('#settings').modal('hide');
+        self.user(data.user[0]);
+    }).fail(function(jqXHR) {
+      console.log(jqXHR);
+      $("#editTaskErrorMessage").html("We couldn't update your settings.");
+    });
+  }
+
   self.openSettings = function() {
-    $('#settings').modal('show');
+    $("#settings").modal("show");
+    userSettingsViewModel.setUser(self.user());
   }
 
   self.openAdd = function() {
-    $('#addTask').modal('show');
+    $("#addTask").modal("show");
   }
 
   self.addTask = function(task) {
-    self.ajax(self.user().createTaskURI, 'POST', task).done(function(data) {
-      $('#addTask').modal('hide');
+    self.ajax(self.user().createTaskURI, "POST", task).done(function(data) {
+      $("#addTask").modal("hide");
 
       self.tasks([]);
       self.getActiveTasks();
@@ -90,6 +101,7 @@ function TasksViewModel() {
   }
 
   self.openEdit = function(task) {
+    $("#editTask").modal("show");
     editTaskViewModel.setTask(task);
   }
 
@@ -121,9 +133,33 @@ function TasksViewModel() {
     });
   }
 
-  self.markDone = function(task) {
-    self.ajax(task.uri(), 'PUT', { done: true }).done(function(res) {
-      self.updateTask(task, res.task);
+  self.toggleDone = function(task) {
+    var today = new Date();
+    var dd = today.getDate();
+    var mm = today.getMonth()+1;
+    var yyyy = today.getFullYear();
+    if (dd<10) {dd='0'+dd;}
+    if (mm<10) {mm='0'+mm;}
+
+    var todayStr = yyyy + "-" + mm + "-" + dd;
+    if (task.done() === false) {
+      data = {
+        done: true,
+        completion_date: todayStr
+      };
+    }
+    else {
+      data = {
+        done: false,
+        completion_date: ""
+      };
+    }
+
+    self.ajax(task.uri(), 'PUT', data).done(function(data) {
+        self.tasks([]);
+        self.getActiveTasks();
+    }).fail(function(jqXHR) {
+      console.log(jqXHR);
     });
   }
 
@@ -181,6 +217,7 @@ function LoginViewModel() {
   }
 }
 
+
 function CreateUserViewModel() {
   var self = this;
   self.username = ko.observable("");
@@ -226,6 +263,7 @@ function CreateUserViewModel() {
   }
 }
 
+
 function AddTaskViewModel() {
   var self = this;
   self.name = ko.observable("");
@@ -240,6 +278,8 @@ function AddTaskViewModel() {
       $("#addTaskErrorMessage").html("Please fill in Task, Commitment, and Due Date.");
     }
     else {
+      console.log(self.dueDate());
+
       tasksViewModel.addTask({
         name: self.name(),
         commitment: self.commitment(),
@@ -258,6 +298,7 @@ function AddTaskViewModel() {
   }
 }
 
+
 function EditTaskViewModel() {
   var self = this;
   self.task = null;
@@ -274,8 +315,6 @@ function EditTaskViewModel() {
     self.dueDate(task.dueDate());
     self.headsUp((task.headsUp() == null) ? "" : task.headsUp());
     self.notes((task.notes() == null) ? "" : task.notes());
-
-    $('#editTask').modal('show');
   }
 
   self.editTask = function() {
@@ -302,6 +341,7 @@ function EditTaskViewModel() {
   }
 }
 
+
 function DeleteTaskViewModel() {
   var self = this;
   self.task = null;
@@ -311,7 +351,7 @@ function DeleteTaskViewModel() {
     self.task = task;
     self.name(task.name());
 
-    $('#deleteTask').modal('show');
+    $("#deleteTask").modal("show");
   }
 
   self.deleteTask = function() {
@@ -321,19 +361,47 @@ function DeleteTaskViewModel() {
 }
 
 
+function UserSettingsViewModel() {
+  var self = this;
+  self.user = null;
+  self.vision = ko.observable("");
+
+  self.setUser = function(user) {
+    self.user = user;
+    self.vision(user.vision);
+  }
+
+  self.updateUser = function() {
+    if (self.vision() === "" || parseInt(self.vision()) > 60 || parseInt(self.vision()) < 1) {
+      $("#settingsErrorMessage").html("Please provide a value between 1 and 60 days.");
+    }
+    else {
+      tasksViewModel.updateUser(self.user.userURI, {
+        vision: parseInt(self.vision())
+      });
+
+      self.vision("");
+      $("#settingsErrorMessage").html("");
+    }
+  }
+}
+
+
 var tasksViewModel = new TasksViewModel();
 var loginViewModel = new LoginViewModel();
 var createUserViewModel = new CreateUserViewModel();
+var userSettingsViewModel = new UserSettingsViewModel();
 var addTaskViewModel = new AddTaskViewModel();
 var editTaskViewModel = new EditTaskViewModel();
 var deleteTaskViewModel = new DeleteTaskViewModel();
-ko.applyBindings(tasksViewModel, $('#main')[0]);
-ko.applyBindings(loginViewModel, $('#login')[0]);
-ko.applyBindings(createUserViewModel, $('#createUser')[0]);
-ko.applyBindings(addTaskViewModel, $('#addTask')[0]);
-ko.applyBindings(editTaskViewModel, $('#editTask')[0]);
-ko.applyBindings(deleteTaskViewModel, $('#deleteTask')[0]);
+ko.applyBindings(tasksViewModel, $("#main")[0]);
+ko.applyBindings(loginViewModel, $("#login")[0]);
+ko.applyBindings(createUserViewModel, $("#createUser")[0]);
+ko.applyBindings(userSettingsViewModel, $("#settings")[0]);
+ko.applyBindings(addTaskViewModel, $("#addTask")[0]);
+ko.applyBindings(editTaskViewModel, $("#editTask")[0]);
+ko.applyBindings(deleteTaskViewModel, $("#deleteTask")[0]);
 
 $(document).ready(function(){
-    $('[data-toggle="popover"]').popover();
+    $("[data-toggle='popover']").popover();
 });

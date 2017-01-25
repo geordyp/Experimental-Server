@@ -24,18 +24,23 @@
       </div>
     </div>
     <table class="table table-striped">
-      <tr><td style="width: 1px;"></td><td><b>Task</b></td><td><b>Options</b></td></tr>
+      <tr><td style="width: 1px;"></td><td><b>Task</b></td><td><b>Due Date</b></td><td><b>Days Left</b></td><td><b>Options</b></td></tr>
       <!-- ko foreach: tasks -->
       <tr>
         <td>
           <span data-bind="visible: done" class="label label-success">Done</span>
         </td>
-        <td><p><b data-bind="text: name"></b></p><p data-bind="text: notes"></p></td>
+        <td><p><i data-bind="text: commitment"></i><br><b data-bind="text: name"></b></p><p data-bind="text: notes"></p></td>
+        <td><b data-bind="text: dueDate"></b></td>
+        <td><b data-bind="text: daysLeft"></b></td>
         <td>
           <button data-bind="click: $parent.openEdit" class="btn">Edit</button>
           <button data-bind="click: $parent.openDelete" class="btn">Delete</button>
           <span data-bind="visible: !done()">
-            <button data-bind="click: $parent.markDone" class="btn">Mark Done</button>
+            <button data-bind="click: $parent.toggleDone" class="btn">Mark Done</button>
+          </span>
+          <span data-bind="visible: done()">
+            <button data-bind="click: $parent.toggleDone" class="btn">Not Done</button>
           </span>
         </td>
       </tr>
@@ -54,13 +59,13 @@
         <div class="control-group">
           <label class="control-label" for="inputUsername">Username</label>
           <div class="controls">
-            <input data-bind="value: username" type="text" id="inputUsername" placeholder="username" style="width:150px;">
+            <input data-bind="value: username" type="text" id="inputLoginUsername" placeholder="username" style="width:150px;">
           </div>
         </div>
         <div class="control-group">
           <label class="control-label" for="inputPassword">Password</label>
           <div class="controls">
-            <input data-bind="value: password" type="password" id="inputPassword" placeholder="password" style="width:150px;">
+            <input data-bind="value: password" type="password" id="inputLoginPassword" placeholder="password" style="width:150px;">
           </div>
         </div>
         <div class="control-group">
@@ -85,13 +90,13 @@
         <div class="control-group">
           <label class="control-label" for="inputNewUsername">Username</label>
           <div class="controls">
-            <input data-bind="value: username" type="text" id="inputNewUsername" placeholder="username" style="width:150px;">
+            <input data-bind="value: username" type="text" id="inputUsername" placeholder="username" style="width:150px;">
           </div>
         </div>
         <div class="control-group">
           <label class="control-label" for="inputNewPassword">Password</label>
           <div class="controls">
-            <input data-bind="value: password" type="password" id="inputNewPassword" placeholder="password" style="width:150px;">
+            <input data-bind="value: password" type="password" id="inputPassword" placeholder="password" style="width:150px;">
           </div>
         </div>
         <div class="control-group">
@@ -111,44 +116,26 @@
     </div>
   </div>
 
-  <div id="settings" class="modal hide fade" tabindex="=1" role="dialog" aria-labelledby="loginDialogLabel" aria-hidden="true">
+  <div id="settings" class="modal hide fade" tabindex="=1" role="dialog" aria-labelledby="settingsDialogLabel" aria-hidden="true">
     <div class="modal-header">
       <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-      <h3 id="loginDialogLabel">Create Account</h3>
+      <h3 id="settingsDialogLabel">Settings</h3>
     </div>
     <div class="modal-body">
       <form class="form-horizontal">
         <div class="control-group">
-          <label class="control-label" for="inputNewUsername">Username</label>
-          <div class="controls">
-            <input data-bind="value: username" type="text" id="inputNewUsername" placeholder="username" style="width:150px;">
-          </div>
-        </div>
-        <div class="control-group">
-          <label class="control-label" for="inputNewPassword">Password</label>
-          <div class="controls">
-            <input data-bind="value: password" type="password" id="inputNewPassword" placeholder="password" style="width:150px;">
-          </div>
-        </div>
-        <div class="control-group">
-          <label class="control-label" for="inputVerifyPassword">Verify Password</label>
-          <div class="controls">
-            <input data-bind="value: verifyPassword" type="password" id="inputVerifyPassword" placeholder="password" style="width:150px;">
-          </div>
-        </div>
-        <div class="control-group">
           <label class="control-label" for="inputVision">Display tasks in <a href="#" data-toggle="popover" title="What is On Deck?" data-content="The On Deck view will gather the tasks that need your attention.">On Deck</a> that are due within __ days</label>
           <div class="controls">
-            <input data-bind="value: vision" type="text" id="inputVision" placeholder="3" style="width:150px;">
+            <input data-bind="value: vision" type="number" id="inputVision" max=60 min=1 style="width:150px;">
           </div>
         </div>
         <div class="control-group">
-          <div id="createUserErrorMessage" style="color:red; text-align:center;"></div>
+          <div id="settingsErrorMessage" style="color:red; text-align:center;"></div>
         </div>
       </form>
     </div>
     <div class="modal-footer">
-      <button data-bind="click: createUser" class="btn btn-primary">Create Account</button>
+      <button data-bind="click: updateUser" class="btn btn-primary">Update</button>
       <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
     </div>
   </div>
