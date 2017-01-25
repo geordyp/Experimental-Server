@@ -9,6 +9,7 @@ function TasksViewModel() {
 
   self.user = ko.observable(null);
   self.tasks = ko.observableArray([]);
+  self.doneView = ko.observable(null);
 
   self.ajax = function(uri, method, data) {
     var request = {
@@ -164,14 +165,26 @@ function TasksViewModel() {
   }
 
   self.getActiveTasks = function() {
+    $("#pill-active").addClass("active");
+    $("#pill-ondeck").removeClass("active");
+    $("#pill-done").removeClass("active");
+    self.doneView(false);
     self.getTasks(self.user().activeTasksURI)
   }
 
   self.getOnDeckTasks = function() {
+    $("#pill-ondeck").addClass("active");
+    $("#pill-active").removeClass("active");
+    $("#pill-done").removeClass("active");
+    self.doneView(false);
     self.getTasks(self.user().onDeckTasksURI)
   }
 
   self.getDoneTasks = function() {
+    $("#pill-done").addClass("active");
+    $("#pill-ondeck").removeClass("active");
+    $("#pill-active").removeClass("active");
+    self.doneView(true);
     self.getTasks(self.user().doneTasksURI)
   }
 

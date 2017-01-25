@@ -18,34 +18,56 @@
     </div>
     <div class="navbar">
       <div class="navbar-inner">
-        <a data-bind="click: getActiveTasks" class="brand" href="#">All</a>
-        <a data-bind="click: getOnDeckTasks" class="brand" href="#">On Deck</a>
-        <a data-bind="click: getDoneTasks" class="brand" href="#">Done</a>
+        <ul class="nav nav-pills">
+          <li id="pill-active" data-bind="click: getActiveTasks"><a href="#">Active</a></li>
+          <li id="pill-ondeck" data-bind="click: getOnDeckTasks"><a href="#">On Deck</a></li>
+          <li id="pill-done" data-bind="click: getDoneTasks"><a href="#">Done</a></li>
+        </ul>
       </div>
     </div>
-    <table class="table table-striped">
-      <tr><td style="width: 1px;"></td><td><b>Task</b></td><td><b>Due Date</b></td><td><b>Days Left</b></td><td><b>Options</b></td></tr>
-      <!-- ko foreach: tasks -->
-      <tr>
-        <td>
-          <span data-bind="visible: done" class="label label-success">Done</span>
-        </td>
-        <td><p><i data-bind="text: commitment"></i><br><b data-bind="text: name"></b></p><p data-bind="text: notes"></p></td>
-        <td><b data-bind="text: dueDate"></b></td>
-        <td><b data-bind="text: daysLeft"></b></td>
-        <td>
-          <button data-bind="click: $parent.openEdit" class="btn">Edit</button>
-          <button data-bind="click: $parent.openDelete" class="btn">Delete</button>
-          <span data-bind="visible: !done()">
-            <button data-bind="click: $parent.toggleDone" class="btn">Mark Done</button>
-          </span>
-          <span data-bind="visible: done()">
-            <button data-bind="click: $parent.toggleDone" class="btn">Not Done</button>
-          </span>
-        </td>
-      </tr>
-      <!-- /ko -->
-    </table>
+    <span data-bind="ifnot: doneView">
+      <table class="table table-striped">
+        <tr><td><b>Task</b></td><td><b>Due Date</b></td><td><b>Days Left</b></td><td><b>Options</b></td></tr>
+        <!-- ko foreach: tasks -->
+        <tr>
+          <td><p><i data-bind="text: commitment"></i><br><b data-bind="text: name"></b></p><p data-bind="text: notes"></p></td>
+          <td><b data-bind="text: dueDate"></b></td>
+          <td><b data-bind="text: daysLeft"></b></td>
+          <td>
+            <button data-bind="click: $parent.openEdit" class="btn">Edit</button>
+            <button data-bind="click: $parent.openDelete" class="btn">Delete</button>
+            <span data-bind="visible: !done()">
+              <button data-bind="click: $parent.toggleDone" class="btn">Mark Done</button>
+            </span>
+            <span data-bind="visible: done()">
+              <button data-bind="click: $parent.toggleDone" class="btn">Not Done</button>
+            </span>
+          </td>
+        </tr>
+        <!-- /ko -->
+      </table>
+    </span>
+    <span data-bind="if: doneView">
+      <table class="table table-striped">
+        <tr><td><b>Task</b></td><td><b>Completion Date</b></td><td><b>Options</b></td></tr>
+        <!-- ko foreach: tasks -->
+        <tr>
+          <td><p><i data-bind="text: commitment"></i><br><b data-bind="text: name"></b></p><p data-bind="text: notes"></p></td>
+          <td><b data-bind="text: completionDate"></b></td>
+          <td>
+            <button data-bind="click: $parent.openEdit" class="btn">Edit</button>
+            <button data-bind="click: $parent.openDelete" class="btn">Delete</button>
+            <span data-bind="visible: !done()">
+              <button data-bind="click: $parent.toggleDone" class="btn">Mark Done</button>
+            </span>
+            <span data-bind="visible: done()">
+              <button data-bind="click: $parent.toggleDone" class="btn">Not Done</button>
+            </span>
+          </td>
+        </tr>
+        <!-- /ko -->
+      </table>
+    </span>
     <span data-bind="if: user"><button data-bind="click: openAdd" class="btn">Add Task</button></span>
   </div>
 
