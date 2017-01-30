@@ -1,5 +1,5 @@
 # Experimental Server
-This is server code for a RESTful web service created with Python and the Flask microframework. This web service will support my smaller projects.
+This is server code for a RESTful web service created with Python and the Flask microframework. This web service will sit on a [digitalocean](http://www.digitalocean.com/) droplet and will be used to support my smaller projects.
 
 ## Currently supported REST clients
 * [To Dooli](http://www.geordywilliams.com/projects/To-Dooli/): A to do list application. [View Code](http://www.github.com/geordyp/To-Dooli)
