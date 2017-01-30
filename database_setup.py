@@ -26,11 +26,11 @@ class EndUser(Base):
             "id": self.id,
             "name": self.name,
             "vision": self.vision,
-            "userURI": "http://localhost:5000/ondeck/api/v1.0/user/" + str(self.id),
-            "createTaskURI": "http://localhost:5000/ondeck/api/v1.0/tasks/new/" + str(self.id),
-            "doneTasksURI": "http://localhost:5000/ondeck/api/v1.0/tasks/" + str(self.id) + "/done",
-            "onDeckTasksURI": "http://localhost:5000/ondeck/api/v1.0/tasks/" + str(self.id) + "/on_deck",
-            "activeTasksURI": "http://localhost:5000/ondeck/api/v1.0/tasks/" + str(self.id) + "/active",
+            "userURI": "http://138.197.77.126/ondeck/api/v1.0/user/" + str(self.id),
+            "createTaskURI": "http://138.197.77.126/ondeck/api/v1.0/tasks/new/" + str(self.id),
+            "doneTasksURI": "http://138.197.77.126/ondeck/api/v1.0/tasks/" + str(self.id) + "/done",
+            "onDeckTasksURI": "http://138.197.77.126/ondeck/api/v1.0/tasks/" + str(self.id) + "/on_deck",
+            "activeTasksURI": "http://138.197.77.126/ondeck/api/v1.0/tasks/" + str(self.id) + "/active",
         }
 
 
@@ -63,7 +63,7 @@ class Task(Base):
             "notes": self.notes,
             "heads_up": str(self.heads_up) if self.heads_up else None,
             "done": self.done,
-            "uri": "http://localhost:5000/ondeck/api/v1.0/tasks/" + str(self.id)
+            "uri": "http://138.197.77.126/ondeck/api/v1.0/tasks/" + str(self.id)
         }
 
 

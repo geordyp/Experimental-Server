@@ -1,4 +1,4 @@
-ssh -i ~/.ssh/root.rsa root@138.197.77.126
+ssh -i ~/.ssh/geordyp.rsa geordyp@138.197.77.126
 
 GET ALL TASKS
 curl -u geordypaul:Appl3B3ar -i -X GET http://localhost:5000/ondeck/api/v1.0/tasks/1/all
