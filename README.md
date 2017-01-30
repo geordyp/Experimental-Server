@@ -2,7 +2,7 @@
 This is server code for a RESTful web service created with Python and the Flask microframework. This web service will support my smaller projects.
 
 ## Currently supported REST clients
-* (To Dooli)[http://www.geordywilliams.com/projects/To_Dooli]: A to do list application. (View Code)[http://www.github.com/geordyp/To_Dooli]
+* [To Dooli](http://www.geordywilliams.com/projects/ToDooli/): A to do list application. [View Code](http://www.github.com/geordyp/To-Dooli)
 
 ## Technologies Used
 * Flask
