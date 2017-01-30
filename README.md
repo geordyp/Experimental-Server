@@ -1,4 +1,4 @@
-# Experimental_Server
+# Experimental Server
 This is server code for a RESTful web service created with Python and the Flask microframework. This web service will support my smaller projects.
 
 ## Currently supported REST clients
