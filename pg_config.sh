@@ -5,6 +5,10 @@ apt-get -qqy install python-pip
 pip install werkzeug==0.8.3
 pip install flask==0.9
 pip install Flask-Login==0.1.3
-pip install oauth2client
 pip install requests
 pip install httplib2
+pip install -U flask-cors
+pip install flask-httpauth
+
+sudo -u postgres psql -c "CREATE USER geordypaul WITH PASSWORD 'P1zzaCat';"
+sudo -u postgres psql -c "CREATE DATABASE tasks;"
