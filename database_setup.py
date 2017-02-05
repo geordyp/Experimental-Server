@@ -67,5 +67,5 @@ class Task(Base):
         }
 
 
-engine = create_engine("postgresql://geordypaul:P1zzaCat@localhost/tasks")
+engine = create_engine("postgresql://me:password@localhost/tasks")
 Base.metadata.create_all(engine)

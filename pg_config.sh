@@ -10,5 +10,5 @@ pip install httplib2
 pip install -U flask-cors
 pip install flask-httpauth
 
-sudo -u postgres psql -c "CREATE USER geordypaul WITH PASSWORD 'P1zzaCat';"
+sudo -u postgres psql -c "CREATE USER me WITH PASSWORD 'password';"
 sudo -u postgres psql -c "CREATE DATABASE tasks;"

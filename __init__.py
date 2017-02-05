@@ -23,7 +23,7 @@ app = Flask(__name__)
 CORS(app)
 
 # Connect to Database and create database session
-engine = create_engine("postgresql://geordypaul:P1zzaCat@localhost/tasks")
+engine = create_engine("postgresql://me:password@localhost/tasks")
 Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
@@ -268,11 +268,11 @@ def is_valid_pw_login(name, pw, h):
     return h == make_pw_hash(name, pw, salt)
 
 
-@auth.get_password
-def get_password(username):
-    if username == "geordypaul":
-        return "Appl3B3ar"
-    return None
+@auth.verify_password
+def verify_password(username, password):
+    if username == "me" and password == "password":
+        return True
+    return False
 
 
 @auth.error_handler
