@@ -13,6 +13,8 @@ import json
 import string
 import random
 import hashlib
+import uuid
+import re
 
 import datetime
 from datetime import date
@@ -44,12 +46,23 @@ def create_user():
         type(request.json["password"]) != unicode):
         abort(400)
 
-    # check if user name is already taken
+    # check if username is the correct format
+    username_re = re.compile(r"^[a-zA-Z0-9_-]{1,20}$")
+    if not username_re.match(request.json["name"]):
+        return make_response(jsonify({"error": "Invalid username."}), 400)
+
+    # check if password is the correct format
+    password_re = re.compile(r"^.{3,20}$")
+    if not password_re.match(request.json["password"]):
+        return make_response(jsonify({"error": "Invalid password."}), 400)
+
+    # check if username is already taken
     if get_user_by_name(request.json["name"]):
-        return make_response(jsonify({"error": "This username is taken"}), 400)
+        return make_response(jsonify({"error": "Username is taken"}), 400)
 
     password_hash = make_pw_hash(request.json["name"], request.json["password"])
-    newUser = EndUser(name=request.json["name"],
+    newUser = EndUser(id=str(uuid.uuid1()),
+                      name=request.json["name"],
                       pw_hash=password_hash,
                       vision=3)
     session.add(newUser)
