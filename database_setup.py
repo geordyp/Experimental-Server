@@ -15,7 +15,7 @@ Base = declarative_base()
 class EndUser(Base):
     __tablename__ = "enduser"
 
-    id = Column(Integer, primary_key=True)
+    id = Column(String(250), primary_key=True)
     name = Column(String(250), nullable=False)
     pw_hash = Column(String(250), nullable=False)
     vision = Column(Integer, nullable=False)  # On Deck setting
@@ -37,7 +37,7 @@ class EndUser(Base):
 class Task(Base):
     __tablename__ = "task"
 
-    id = Column(Integer, primary_key=True)
+    id = Column(String(250), primary_key=True)
     name = Column(String(250), nullable=False)
     task_group = Column(String(250), nullable=False)
     due_date = Column(Date, nullable=False)
@@ -45,7 +45,7 @@ class Task(Base):
     done = Column(Boolean, nullable=False)
     completion_date = Column(Date, nullable=True)
     notes = Column(String(400), nullable=True)
-    enduser_id = Column(Integer, ForeignKey("enduser.id"), nullable=False)
+    enduser_id = Column(String(250), ForeignKey("enduser.id"), nullable=False)
     enduser = relationship(EndUser)
 
     @property
