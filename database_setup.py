@@ -19,6 +19,7 @@ class EndUser(Base):
     name = Column(String(250), nullable=False)
     pw_hash = Column(String(250), nullable=False)
     vision = Column(Integer, nullable=False)  # On Deck setting
+    date_created = Column(DateTime, default=datetime.datetime.utcnow)
 
     @property
     def serialize(self):
@@ -26,11 +27,11 @@ class EndUser(Base):
             "id": self.id,
             "name": self.name,
             "vision": self.vision,
-            "userURI": "http://138.197.77.126/ondeck/api/v1.0/user/" + str(self.id),
-            "createTaskURI": "http://138.197.77.126/ondeck/api/v1.0/tasks/new/" + str(self.id),
-            "doneTasksURI": "http://138.197.77.126/ondeck/api/v1.0/tasks/" + str(self.id) + "/done",
-            "onDeckTasksURI": "http://138.197.77.126/ondeck/api/v1.0/tasks/" + str(self.id) + "/on_deck",
-            "activeTasksURI": "http://138.197.77.126/ondeck/api/v1.0/tasks/" + str(self.id) + "/active"
+            "userURI": "http://138.197.77.126/ondeck/api/v1.0/user/" + self.id,
+            "createTaskURI": "http://138.197.77.126/ondeck/api/v1.0/tasks/new/" + self.id,
+            "doneTasksURI": "http://138.197.77.126/ondeck/api/v1.0/tasks/" + self.id + "/done",
+            "onDeckTasksURI": "http://138.197.77.126/ondeck/api/v1.0/tasks/" + self.id + "/on_deck",
+            "activeTasksURI": "http://138.197.77.126/ondeck/api/v1.0/tasks/" + self.id + "/active"
         }
 
 
@@ -47,6 +48,7 @@ class Task(Base):
     notes = Column(String(400), nullable=True)
     enduser_id = Column(String(250), ForeignKey("enduser.id"), nullable=False)
     enduser = relationship(EndUser)
+    date_created = Column(DateTime, default=datetime.datetime.utcnow)
 
     @property
     def serialize(self):
@@ -63,7 +65,7 @@ class Task(Base):
             "notes": self.notes,
             "heads_up": str(self.heads_up) if self.heads_up else None,
             "done": self.done,
-            "uri": "http://138.197.77.126/ondeck/api/v1.0/tasks/" + str(self.id)
+            "uri": "http://138.197.77.126/ondeck/api/v1.0/tasks/" + self.id
         }
 
 
