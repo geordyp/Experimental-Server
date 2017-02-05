@@ -161,21 +161,21 @@ def create_task(user_id):
     # Create a new task
     if (not request.json or
         not "name" in request.json or
-        not "commitment" in request.json or
+        not "task_group" in request.json or
         not "due_date" in request.json or
         not "heads_up" in request.json or
         not "notes" in request.json):
         abort(400)
 
     if (type(request.json["name"]) != unicode or
-        type(request.json["commitment"]) != unicode or
+        type(request.json["task_group"]) != unicode or
         type(request.json["due_date"]) != unicode or
         type(request.json["heads_up"]) != unicode or
         type(request.json["notes"]) != unicode):
         abort(400)
 
     newTask = Task(name=request.json["name"],
-                   commitment=request.json["commitment"],
+                   task_group=request.json["task_group"],
                    due_date=request.json["due_date"],
                    enduser_id=user_id,
                    done=False,
@@ -208,7 +208,7 @@ def update_task(task_id):
             abort(400)
 
         if ("name" in request.json and type(request.json["name"]) != unicode or
-            "commitment" in request.json and type(request.json["commitment"]) != unicode or
+            "task_group" in request.json and type(request.json["task_group"]) != unicode or
             "due_date" in request.json and type(request.json["due_date"]) != unicode or
             "heads_up" in request.json and type(request.json["heads_up"]) != unicode or
             "done" in request.json and type(request.json["done"]) != bool or
@@ -217,7 +217,7 @@ def update_task(task_id):
             abort(400)
 
         updatedTask.name = request.json.get("name", updatedTask.name)
-        updatedTask.commitment = request.json.get("commitment", updatedTask.commitment)
+        updatedTask.task_group = request.json.get("task_group", updatedTask.task_group)
         updatedTask.due_date = request.json.get("due_date", updatedTask.due_date)
         updatedTask.done = request.json.get("done", updatedTask.done)
         updatedTask.heads_up = request.json.get("heads_up", updatedTask.heads_up)

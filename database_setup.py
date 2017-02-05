@@ -30,7 +30,7 @@ class EndUser(Base):
             "createTaskURI": "http://138.197.77.126/ondeck/api/v1.0/tasks/new/" + str(self.id),
             "doneTasksURI": "http://138.197.77.126/ondeck/api/v1.0/tasks/" + str(self.id) + "/done",
             "onDeckTasksURI": "http://138.197.77.126/ondeck/api/v1.0/tasks/" + str(self.id) + "/on_deck",
-            "activeTasksURI": "http://138.197.77.126/ondeck/api/v1.0/tasks/" + str(self.id) + "/active",
+            "activeTasksURI": "http://138.197.77.126/ondeck/api/v1.0/tasks/" + str(self.id) + "/active"
         }
 
 
@@ -39,7 +39,7 @@ class Task(Base):
 
     id = Column(Integer, primary_key=True)
     name = Column(String(250), nullable=False)
-    commitment = Column(String(250), nullable=False)
+    task_group = Column(String(250), nullable=False)
     due_date = Column(Date, nullable=False)
     heads_up = Column(Date, nullable=True)
     done = Column(Boolean, nullable=False)
@@ -56,7 +56,7 @@ class Task(Base):
 
         return {
             "name": self.name,
-            "commitment": self.commitment,
+            "task_group": self.task_group,
             "completion_date": str(self.completion_date) if self.completion_date else None,
             "due_date": str(self.due_date),
             "days_left": daysLeft,
