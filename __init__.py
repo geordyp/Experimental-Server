@@ -24,8 +24,8 @@ from datetime import timedelta
 app = Flask(__name__)
 CORS(app)
 
-# Connect to Database and create database session
-engine = create_engine("postgresql://me:password@localhost/tasks")
+# connect to database and create database session
+engine = create_engine('postgresql://me:password@localhost/tasks')
 Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
@@ -33,36 +33,34 @@ session = DBSession()
 auth = HTTPBasicAuth()
 
 
-@app.route("/ondeck/api/v1.0/user", methods=["POST"])
+@app.route('/ondeck/api/v1.0/user', methods=['POST'])
 @auth.login_required
 def create_user():
-    # Create a new user
+    # create a new user
     if (not request.json or
-        not "name" in request.json or
-        not "password" in request.json):
+        not 'name' in request.json or
+        not 'password' in request.json):
         abort(400)
 
-    if (type(request.json["name"]) != unicode or
-        type(request.json["password"]) != unicode):
+    if (type(request.json['name']) != unicode or
+        type(request.json['password']) != unicode):
         abort(400)
 
     # check if username is the correct format
-    username_re = re.compile(r"^[a-zA-Z0-9_-]{1,20}$")
-    if not username_re.match(request.json["name"]):
-        return make_response(jsonify({"error": "Invalid username."}), 400)
+    if not is_valid_username(request.json['name']):
+        return make_response(jsonify({"error": "Invalid username"}), 400)
 
     # check if password is the correct format
-    password_re = re.compile(r"^.{3,20}$")
-    if not password_re.match(request.json["password"]):
-        return make_response(jsonify({"error": "Invalid password."}), 400)
+    if not is_valid_password(request.json['password']):
+        return make_response(jsonify({"error": "Invalid password"}), 400)
 
     # check if username is already taken
-    if get_user_by_name(request.json["name"]):
+    if get_user_by_name(request.json['name']):
         return make_response(jsonify({"error": "Username is taken"}), 400)
 
-    password_hash = make_pw_hash(request.json["name"], request.json["password"])
+    password_hash = make_pw_hash(request.json['name'], request.json['password'])
     newUser = EndUser(id=str(uuid.uuid1()),
-                      name=request.json["name"],
+                      name=request.json['name'],
                       pw_hash=password_hash,
                       vision=3)
     session.add(newUser)
@@ -70,26 +68,26 @@ def create_user():
     return make_response(jsonify(user=[newUser.serialize]), 201)
 
 
-@app.route("/ondeck/api/v1.0/user/login", methods=["POST"])
+@app.route('/ondeck/api/v1.0/user/login', methods=['POST'])
 @auth.login_required
 def validate_login():
-    # Validate user log in
+    # validate user log in
     if (not request.json or
-        not "name" in request.json or
-        not "password" in request.json):
+        not 'name' in request.json or
+        not 'password' in request.json):
         abort(400)
 
-    if (type(request.json["name"]) != unicode or
-        type(request.json["password"]) != unicode):
+    if (type(request.json['name']) != unicode or
+        type(request.json['password']) != unicode):
         abort(400)
 
     try:
         # get user
-        user = get_user_by_name(request.json["name"])
+        user = get_user_by_name(request.json['name'])
 
         # confirm password
-        if user and is_valid_pw_login(request.json["name"],
-                                      request.json["password"],
+        if user and is_valid_pw_login(request.json['name'],
+                                      request.json['password'],
                                       user.pw_hash):
             return make_response(jsonify(user=[user.serialize]), 200)
         else:
@@ -98,29 +96,51 @@ def validate_login():
         abort(404)
 
 
-@app.route("/ondeck/api/v1.0/user/<int:user_id>", methods=["PUT"])
+@app.route('/ondeck/api/v1.0/user/<string:user_id>', methods=['PUT'])
 @auth.login_required
 def update_user(user_id):
-    # Update a user
+    # update a user
+    if not request.json:
+        abort(400)
+
+    # check username
+    if 'name' in request.json:
+        if type(request.json['name']) != unicode:
+            abort(400)
+        elif not is_valid_username(request.json['name']):
+            return make_response(jsonify({"error": "Invalid username"}), 400)
+        elif get_user_by_name(request.json['name']):
+            return make_response(jsonify({"error": "Username is taken"}), 400)
+
+    # check password
+    if 'password' in request.json:
+        if type(request.json['password']) != unicode:
+            abort(400)
+        elif not is_valid_password(request.json['password']):
+            return make_response(jsonify({"error": "Invalid password"}), 400)
+
+    # check vision
+    if 'vision' in request.json:
+        if type(request.json['vision']) != int:
+            abort(400)
+        elif not is_valid_vision(request.json['vision']):
+            return make_response(jsonify({"error": "Invalid on deck setting"}), 400)
+
     try:
         updatedUser = session.query(EndUser).filter(EndUser.id == user_id).one()
-        if (not request.json):
-            abort(400)
-
-        if "vision" in request.json and type(request.json["vision"]) != int:
-            abort(400)
-
-        updatedUser.vision = request.json.get("vision", updatedUser.vision)
+        updatedUser.name = request.json.get('name', updatedUser.name)
+        updatedUser.password = request.json.get('password', updatedUser.password)
+        updatedUser.vision = request.json.get('vision', updatedUser.vision)
         session.commit()
         return make_response(jsonify(user=[updatedUser.serialize]), 202)
     except NoResultFound:
         abort(404)
 
 
-@app.route("/ondeck/api/v1.0/user/<int:user_id>", methods=["DELETE"])
+@app.route("/ondeck/api/v1.0/user/<string:user_id>", methods=["DELETE"])
 @auth.login_required
 def delete_user(user_id):
-    # Delete a user and their tasks
+    # delete a user and their tasks
     try:
         user = session.query(EndUser).filter(EndUser.id == user_id).one()
 
@@ -135,7 +155,7 @@ def delete_user(user_id):
         abort(404)
 
 
-@app.route("/ondeck/api/v1.0/tasks/<int:user_id>/<string:filter_list>", methods=["GET"])
+@app.route("/ondeck/api/v1.0/tasks/<string:user_id>/<string:filter_list>", methods=["GET"])
 @auth.login_required
 def get_tasks(user_id, filter_list):
     # Retrieve list of tasks
@@ -279,6 +299,32 @@ def make_salt(length=5):
 def is_valid_pw_login(name, pw, h):
     salt = h.split(",")[1]
     return h == make_pw_hash(name, pw, salt)
+
+
+def is_valid_username(name):
+    # check if username is the correct format
+    username_re = re.compile(r"^[a-zA-Z0-9_-]{1,20}$")
+    if not username_re.match(name):
+        return False
+
+    return True
+
+
+def is_valid_password(password):
+    # check if password is the correct format
+    password_re = re.compile(r"^.{3,20}$")
+    if not password_re.match(password):
+        return False
+
+    return True
+
+
+def is_valid_vision(vision):
+    # check if vision is the correct format
+    if (int(vision) > 0 and int(vision) < 61):
+        return True
+
+    return False
 
 
 @auth.verify_password
