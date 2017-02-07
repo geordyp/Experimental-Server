@@ -240,7 +240,7 @@ def get_tasks(user_id, filter_list):
     return make_response(jsonify(tasks=[t.serialize for t in tasks]), 200)
 
 
-@app.route("/ondeck/api/v1.0/tasks/<string:task_id>", methods=["GET"])
+@app.route('/ondeck/api/v1.0/tasks/<string:task_id>', methods=['GET'])
 @auth.login_required
 def get_task(task_id):
     # retrieve a task
@@ -251,33 +251,71 @@ def get_task(task_id):
         abort(404)
 
 
-@app.route("/ondeck/api/v1.0/tasks/<int:task_id>", methods=["PUT"])
+@app.route('/ondeck/api/v1.0/tasks/<string:task_id>', methods=['PUT'])
 @auth.login_required
 def update_task(task_id):
-    # Update an existing task
+    # update an existing task
+    if not request.json:
+        abort(400)
+
+    # check task name
+    if 'name' in request.json:
+        if type(request.json['name']) != unicode:
+            abort(400)
+        elif not is_valid_field(request.json['name'], 250, True):
+            return make_response(jsonify({"error": "Invalid task name"}), 400)
+
+    # check task group
+    if 'task_group' in request.json:
+        if type(request.json['task_group']) != unicode:
+            abort(400)
+        elif not is_valid_field(request.json['task_group'], 250, True):
+            return make_response(jsonify({"error": "Invalid task group"}), 400)
+
+    # check due date
+    if 'due_date' in request.json:
+        if type(request.json['due_date']) != unicode:
+            abort(400)
+        elif not is_valid_date(request.json['due_date'], True):
+            return make_response(jsonify({"error": "Invalid due date"}), 400)
+
+    # check heads up date
+    if 'heads_up' in request.json:
+        if type(request.json['heads_up']) != unicode:
+            abort(400)
+        elif not is_valid_date(request.json['heads_up'], False):
+            return make_response(jsonify({"error": "Invalid heads up"}), 400)
+
+    # check done
+    if 'done' in request.json:
+        if type(request.json['done']) != bool:
+            abort(400)
+
+    # check completion date
+    if 'completion_date' in request.json:
+        if type(request.json['completion_date']) != unicode:
+            abort(400)
+        elif not is_valid_date(request.json['completion_date'], False):
+            return make_response(jsonify({"error": "Invalid completion date"}), 400)
+
+    # check notes
+    if 'notes' in request.json:
+        if type(request.json['notes']) != unicode:
+            abort(400)
+        elif not is_valid_field(request.json['notes'], 400, False):
+            return make_response(jsonify({"error": "Invalid notes"}), 400)
+
     try:
         updatedTask = session.query(Task).filter(Task.id == task_id).one()
-        if (not request.json):
-            abort(400)
-
-        if ("name" in request.json and type(request.json["name"]) != unicode or
-            "task_group" in request.json and type(request.json["task_group"]) != unicode or
-            "due_date" in request.json and type(request.json["due_date"]) != unicode or
-            "heads_up" in request.json and type(request.json["heads_up"]) != unicode or
-            "done" in request.json and type(request.json["done"]) != bool or
-            "completion_date" in request.json and type(request.json["completion_date"]) != unicode or
-            "notes" in request.json and type(request.json["notes"]) != unicode):
-            abort(400)
-
-        updatedTask.name = request.json.get("name", updatedTask.name)
-        updatedTask.task_group = request.json.get("task_group", updatedTask.task_group)
-        updatedTask.due_date = request.json.get("due_date", updatedTask.due_date)
-        updatedTask.done = request.json.get("done", updatedTask.done)
-        updatedTask.heads_up = request.json.get("heads_up", updatedTask.heads_up)
+        updatedTask.name = request.json.get('name', updatedTask.name)
+        updatedTask.task_group = request.json.get('task_group', updatedTask.task_group)
+        updatedTask.due_date = request.json.get('due_date', updatedTask.due_date)
+        updatedTask.done = request.json.get('done', updatedTask.done)
+        updatedTask.heads_up = request.json.get('heads_up', updatedTask.heads_up)
         updatedTask.heads_up = None if updatedTask.heads_up == "" else updatedTask.heads_up
-        updatedTask.completion_date =  request.json.get("completion_date", updatedTask.completion_date)
+        updatedTask.completion_date =  request.json.get('completion_date', updatedTask.completion_date)
         updatedTask.completion_date =  None if updatedTask.completion_date == "" else updatedTask.completion_date
-        updatedTask.notes = request.json.get("notes", updatedTask.notes)
+        updatedTask.notes = request.json.get('notes', updatedTask.notes)
         updatedTask.notes = None if updatedTask.notes == "" else updatedTask.notes
         session.commit()
         return make_response(jsonify(task=[updatedTask.serialize]), 202)
@@ -285,7 +323,7 @@ def update_task(task_id):
         abort(404)
 
 
-@app.route("/ondeck/api/v1.0/tasks/<int:task_id>", methods=["DELETE"])
+@app.route('/ondeck/api/v1.0/tasks/<int:task_id>', methods=['DELETE'])
 @auth.login_required
 def delete_task(task_id):
     # Delete a task
@@ -392,6 +430,6 @@ def not_found(error):
     return make_response(jsonify({"error": "Bad request"}), 400)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     app.debug = True
-    app.run(host="0.0.0.0", port=5000)
+    app.run(host='0.0.0.0', port=5000)
