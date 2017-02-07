@@ -140,7 +140,7 @@ def update_user(user_id):
         abort(404)
 
 
-@app.route("/ondeck/api/v1.0/user/<string:user_id>", methods=["DELETE"])
+@app.route('/ondeck/api/v1.0/user/<string:user_id>', methods=['DELETE'])
 @auth.login_required
 def delete_user(user_id):
     # delete a user and their tasks
@@ -153,9 +153,58 @@ def delete_user(user_id):
 
         session.delete(user)
         session.commit()
-        return make_response(jsonify({"result": True}), 202)
+        return make_response(jsonify({'result': True}), 202)
     except NoResultFound:
         abort(404)
+
+
+@app.route('/ondeck/api/v1.0/tasks/new/<string:user_id>', methods=['POST'])
+@auth.login_required
+def create_task(user_id):
+    # Create a new task
+    if (not request.json or
+        not 'name' in request.json or
+        not 'task_group' in request.json or
+        not 'due_date' in request.json or
+        not 'heads_up' in request.json or
+        not 'notes' in request.json):
+        abort(400)
+
+    if (type(request.json['name']) != unicode or
+        type(request.json['task_group']) != unicode or
+        type(request.json['due_date']) != unicode or
+        type(request.json['heads_up']) != unicode or
+        type(request.json['notes']) != unicode):
+        abort(400)
+
+    # check length of task name
+    if not is_valid_field(request.json['name'], 250, True):
+        return make_response(jsonify({"error": "Invalid task name"}), 400)
+    # check length of task_group
+    if not is_valid_field(request.json['task_group'], 250, True):
+        return make_response(jsonify({"error": "Invalid task group"}), 400)
+    # check if due_date is correct format
+    if not is_valid_date(request.json['due_date'], True):
+        return make_response(jsonify({"error": "Invalid due date"}), 400)
+    # check if heads_up is correct format
+    if not is_valid_date(request.json['heads_up'], False):
+        return make_response(jsonify({"error": "Invalid heads up"}), 400)
+    # check length of notes
+    if not is_valid_field(request.json['notes'], 400, False):
+        return make_response(jsonify({"error": "Invalid notes"}), 400)
+
+    newTask = Task(id=str(uuid.uuid1()),
+                   name=request.json['name'],
+                   task_group=request.json['task_group'],
+                   due_date=request.json['due_date'],
+                   enduser_id=user_id,
+                   done=False,
+                   heads_up=request.json['heads_up'] if request.json['heads_up'] != "" else None,
+                   notes=request.json['notes'] if request.json['notes'] != "" else None,
+                   completion_date=None)
+    session.add(newTask)
+    session.commit()
+    return make_response(jsonify(task=[newTask.serialize]), 201)
 
 
 @app.route("/ondeck/api/v1.0/tasks/<string:user_id>/<string:filter_list>", methods=["GET"])
@@ -189,38 +238,6 @@ def get_tasks(user_id, filter_list):
     else:
         abort(400)
     return make_response(jsonify(tasks=[t.serialize for t in tasks]), 200)
-
-
-@app.route("/ondeck/api/v1.0/tasks/new/<int:user_id>", methods=["POST"])
-@auth.login_required
-def create_task(user_id):
-    # Create a new task
-    if (not request.json or
-        not "name" in request.json or
-        not "task_group" in request.json or
-        not "due_date" in request.json or
-        not "heads_up" in request.json or
-        not "notes" in request.json):
-        abort(400)
-
-    if (type(request.json["name"]) != unicode or
-        type(request.json["task_group"]) != unicode or
-        type(request.json["due_date"]) != unicode or
-        type(request.json["heads_up"]) != unicode or
-        type(request.json["notes"]) != unicode):
-        abort(400)
-
-    newTask = Task(name=request.json["name"],
-                   task_group=request.json["task_group"],
-                   due_date=request.json["due_date"],
-                   enduser_id=user_id,
-                   done=False,
-                   heads_up=request.json["heads_up"] if request.json["heads_up"] != "" else None,
-                   notes=request.json["notes"] if request.json["notes"] != "" else None,
-                   completion_date=None)
-    session.add(newTask)
-    session.commit()
-    return make_response(jsonify(task=[newTask.serialize]), 201)
 
 
 @app.route("/ondeck/api/v1.0/tasks/<int:task_id>", methods=["GET"])
@@ -328,6 +345,29 @@ def is_valid_vision(vision):
         return True
 
     return False
+
+
+def is_valid_field(field, maxLength, required):
+    if (field == "" and required == True):
+        return False
+    if (len(field) > maxLength):
+        return False
+
+    return True
+
+
+def is_valid_date(field, required):
+    if field == "":
+        if required == True:
+            return False
+        else:
+            return True
+
+    date_re = re.compile(r"^(((((((0?[13578])|(1[02]))[\.\-/]?((0?[1-9])|([12]\d)|(3[01])))|(((0?[469])|(11))[\.\-/]?((0?[1-9])|([12]\d)|(30)))|((0?2)[\.\-/]?((0?[1-9])|(1\d)|(2[0-8]))))[\.\-/]?(((19)|(20))?([\d][\d]))))|((0?2)[\.\-/]?(29)[\.\-/]?(((19)|(20))?(([02468][048])|([13579][26])))))$")
+    if not date_re.match(field):
+        return False
+
+    return True
 
 
 @auth.verify_password
