@@ -129,8 +129,11 @@ def update_user(user_id):
     try:
         updatedUser = session.query(EndUser).filter(EndUser.id == user_id).one()
         updatedUser.name = request.json.get('name', updatedUser.name)
-        updatedUser.password = request.json.get('password', updatedUser.password)
         updatedUser.vision = request.json.get('vision', updatedUser.vision)
+        if 'password' in request.json:
+            password_hash = make_pw_hash(updatedUser.name, request.json['password'])
+            updatedUser.password = password_hash
+
         session.commit()
         return make_response(jsonify(user=[updatedUser.serialize]), 202)
     except NoResultFound:
