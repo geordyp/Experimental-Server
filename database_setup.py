@@ -11,7 +11,7 @@ import time
 
 Base = declarative_base()
 
-RESTuri = 'http://http://localhost:5000/ondeck/api/v1.0/'
+RESTuri = 'http://localhost:5000/ondeck/api/v1.0/'
 
 class EndUser(Base):
     __tablename__ = 'enduser'

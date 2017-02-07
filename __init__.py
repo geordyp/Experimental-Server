@@ -161,7 +161,7 @@ def delete_user(user_id):
 @app.route('/ondeck/api/v1.0/tasks/new/<string:user_id>', methods=['POST'])
 @auth.login_required
 def create_task(user_id):
-    # Create a new task
+    # create a new task
     if (not request.json or
         not 'name' in request.json or
         not 'task_group' in request.json or
@@ -207,16 +207,16 @@ def create_task(user_id):
     return make_response(jsonify(task=[newTask.serialize]), 201)
 
 
-@app.route("/ondeck/api/v1.0/tasks/<string:user_id>/<string:filter_list>", methods=["GET"])
+@app.route('/ondeck/api/v1.0/tasks/<string:user_id>/<string:filter_list>', methods=['GET'])
 @auth.login_required
 def get_tasks(user_id, filter_list):
-    # Retrieve list of tasks
-    if filter_list == "done":
+    # retrieve list of tasks
+    if filter_list == 'done':
         tasks = session.query(Task).\
                 filter(Task.enduser_id == user_id,
                 Task.done == True).\
                 order_by(desc(Task.completion_date)).all()
-    elif filter_list == "on_deck":
+    elif filter_list == 'on-deck':
         try:
             # grabbing the enduser to get their on deck vision setting
             user = session.query(EndUser).filter_by(id=user_id).one()
@@ -230,7 +230,7 @@ def get_tasks(user_id, filter_list):
                     order_by(asc(Task.due_date)).all()
         except NoResultFound:
             abort(404)
-    elif filter_list == "active":
+    elif filter_list == 'active':
         tasks = session.query(Task).\
                 filter_by(enduser_id=user_id).\
                 filter_by(done=False).\
@@ -240,10 +240,10 @@ def get_tasks(user_id, filter_list):
     return make_response(jsonify(tasks=[t.serialize for t in tasks]), 200)
 
 
-@app.route("/ondeck/api/v1.0/tasks/<int:task_id>", methods=["GET"])
+@app.route("/ondeck/api/v1.0/tasks/<string:task_id>", methods=["GET"])
 @auth.login_required
 def get_task(task_id):
-    # Retrieve a task
+    # retrieve a task
     try:
         task = session.query(Task).filter(Task.id == task_id).one()
         return make_response(jsonify(task=[task.serialize]), 200)
