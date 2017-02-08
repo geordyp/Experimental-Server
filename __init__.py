@@ -323,10 +323,10 @@ def update_task(task_id):
         abort(404)
 
 
-@app.route('/ondeck/api/v1.0/tasks/<int:task_id>', methods=['DELETE'])
+@app.route('/ondeck/api/v1.0/tasks/<string:task_id>', methods=['DELETE'])
 @auth.login_required
 def delete_task(task_id):
-    # Delete a task
+    # delete a task
     try:
         deletedTask = session.query(Task).filter(Task.id == task_id).one()
         session.delete(deletedTask)
