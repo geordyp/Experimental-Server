@@ -58,8 +58,9 @@ def create_user():
     if get_user_by_name(request.json['name']):
         return make_response(jsonify({"error": "Username is taken"}), 400)
 
-    password_hash = make_pw_hash(request.json['name'], request.json['password'])
-    newUser = EndUser(id=str(uuid.uuid1()),
+    userID = str(uuid.uuid1());
+    password_hash = make_pw_hash(userID, request.json['password'])
+    newUser = EndUser(id=userID,
                       name=request.json['name'],
                       pw_hash=password_hash,
                       vision=3)
@@ -86,7 +87,7 @@ def validate_login():
         user = get_user_by_name(request.json['name'])
 
         # confirm password
-        if user and is_valid_pw_login(request.json['name'],
+        if user and is_valid_pw_login(user.id,
                                       request.json['password'],
                                       user.pw_hash):
             return make_response(jsonify(user=[user.serialize]), 200)
@@ -131,8 +132,8 @@ def update_user(user_id):
         updatedUser.name = request.json.get('name', updatedUser.name)
         updatedUser.vision = request.json.get('vision', updatedUser.vision)
         if 'password' in request.json:
-            password_hash = make_pw_hash(updatedUser.name, request.json['password'])
-            updatedUser.password = password_hash
+            password_hash = make_pw_hash(updatedUser.id, request.json['password'])
+            updatedUser.pw_hash = password_hash
 
         session.commit()
         return make_response(jsonify(user=[updatedUser.serialize]), 202)
