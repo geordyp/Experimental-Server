@@ -31,7 +31,7 @@ class EndUser(Base):
             'userURI': RESTuri + 'user/' + self.id,
             'createTaskURI': RESTuri + 'tasks/new/' + self.id,
             'doneTasksURI': RESTuri + 'tasks/' + self.id + '/done',
-            'onDeckTasksURI': RESTuri + 'tasks/' + self.id + '/on_deck',
+            'onDeckTasksURI': RESTuri + 'tasks/' + self.id + '/on-deck',
             'activeTasksURI': RESTuri + 'tasks/' + self.id + '/active'
         }
 
